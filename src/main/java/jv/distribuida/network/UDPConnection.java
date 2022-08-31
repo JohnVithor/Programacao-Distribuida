@@ -7,7 +7,7 @@ import java.net.InetAddress;
 import java.net.SocketException;
 import java.nio.charset.Charset;
 
-public class UDPConnection {
+public class UDPConnection implements Connection {
 
 	private final DatagramSocket socket;
 	public UDPConnection(int port) throws SocketException {
@@ -27,5 +27,10 @@ public class UDPConnection {
 		socket.receive(receivepacket);
 		String text = new String(receivepacket.getData(), 0, receivepacket.getLength());
 		return new Message(receivepacket.getAddress(), receivepacket.getPort(), text);
+	}
+
+	@Override
+	public void close() {
+		socket.close();
 	}
 }

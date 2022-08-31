@@ -1,25 +1,23 @@
-package jv.distribuida.service;
-
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-import jv.distribuida.network.TCPConnection;
+package jv.distribuida.network;
 
 import java.io.IOException;
 
 public class TCPRequestHandler implements Runnable {
 
     private final TCPConnection connection;
-    public TCPRequestHandler(TCPConnection connection) {
+    private final RequestHandler handler;
+
+    public TCPRequestHandler(TCPConnection connection, RequestHandler handler) {
         this.connection = connection;
+        this.handler = handler;
     }
 
     @Override
     public void run() {
         try {
-            String message = connection.receive();
-            JsonObject json = JsonParser.parseString(message).getAsJsonObject();
-            String action = json.get("action").getAsString();
-            connection.send("OK-"+action);
+            Message message = connection.receive();
+            message = this.handler.handle(message);
+            connection.send(message);
         } catch (IOException e) {
             throw new RuntimeException(e);
         } finally {
