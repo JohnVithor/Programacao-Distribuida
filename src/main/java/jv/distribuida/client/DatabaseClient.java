@@ -1,4 +1,4 @@
-package jv.distribuida.database;
+package jv.distribuida.client;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;

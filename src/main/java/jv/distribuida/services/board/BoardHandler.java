@@ -3,7 +3,7 @@ package jv.distribuida.services.board;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import jv.distribuida.database.DatabaseClient;
+import jv.distribuida.client.DatabaseClient;
 import jv.distribuida.services.AbstractHandler;
 
 public class BoardHandler extends AbstractHandler {

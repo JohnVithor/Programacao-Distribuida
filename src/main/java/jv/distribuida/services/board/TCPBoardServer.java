@@ -1,6 +1,6 @@
 package jv.distribuida.services.board;
 
-import jv.distribuida.database.DatabaseClient;
+import jv.distribuida.client.DatabaseClient;
 import jv.distribuida.network.RequestHandler;
 import jv.distribuida.network.TCPConnection;
 import jv.distribuida.network.TCPRequestHandler;

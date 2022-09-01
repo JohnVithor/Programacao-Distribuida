@@ -3,15 +3,18 @@ package jv.distribuida.services.issue;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import jv.distribuida.database.DatabaseClient;
+import jv.distribuida.client.BoardClient;
+import jv.distribuida.client.DatabaseClient;
 import jv.distribuida.services.AbstractHandler;
 
 public class IssueHandler extends AbstractHandler {
     private final DatabaseClient databaseClient;
+    private final BoardClient boardClient;
     private final String COLLECTION = "Issue";
 
-    public IssueHandler(DatabaseClient databaseClient) {
+    public IssueHandler(DatabaseClient databaseClient, BoardClient boardClient) {
         this.databaseClient = databaseClient;
+        this.boardClient = boardClient;
     }
 
     @Override
@@ -23,6 +26,18 @@ public class IssueHandler extends AbstractHandler {
             JsonObject request = new JsonObject();
             int idBoard = idBoardElem.getAsInt();
             // TODO checar se o board existe
+            JsonObject board = boardClient.get(idBoard, user).getAsJsonObject();
+            if (board.get("status").getAsString().equals("Failure")) {
+                JsonObject response = new JsonObject();
+                response.addProperty("status", "Failure");
+                response.addProperty("message", "All the listed fields are needed");
+                JsonArray fields = new JsonArray();
+                fields.add("idBoard");
+                fields.add("name");
+                fields.add("description");
+                response.add("fields", fields);
+                return response.toString();
+            }
             String name = nameElem.getAsString();
             String description = descElem.getAsString();
             request.addProperty("idBoard", idBoard);

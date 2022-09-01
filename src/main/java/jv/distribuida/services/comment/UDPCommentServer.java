@@ -1,6 +1,6 @@
 package jv.distribuida.services.comment;
 
-import jv.distribuida.database.DatabaseClient;
+import jv.distribuida.client.DatabaseClient;
 import jv.distribuida.network.Message;
 import jv.distribuida.network.RequestHandler;
 import jv.distribuida.network.UDPConnection;
