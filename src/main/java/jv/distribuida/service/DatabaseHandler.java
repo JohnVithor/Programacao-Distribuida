@@ -14,6 +14,7 @@ import java.net.Socket;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
+import java.util.List;
 
 public class DatabaseHandler extends AbstractHandler {
     private final Database database;
@@ -48,15 +49,7 @@ public class DatabaseHandler extends AbstractHandler {
         if (collectionElem != null && dataElem != null) {
             String collection = collectionElem.getAsString();
             JsonObject data = dataElem.getAsJsonObject();
-//            try {
-//                String id = generate_id(data);
-//                data.addProperty("id", id);
             database.save(data, collection);
-//            } catch (IOException e) {
-//                response.addProperty("status", "Failure");
-//                response.addProperty("message", e.getMessage());
-//                return response.toString();
-//            }
             response.addProperty("status", "Success");
             response.add("data", data);
             response.addProperty("collection", collection);
@@ -88,7 +81,7 @@ public class DatabaseHandler extends AbstractHandler {
             response.addProperty("message", "All the listed fields are needed");
             JsonArray fields = new JsonArray();
             fields.add("collection");
-            fields.add("data (should have valid id field)");
+            fields.add("data (should have valid 'id' field)");
             response.add("fields", fields);
         }
         return response.toString();
@@ -96,11 +89,48 @@ public class DatabaseHandler extends AbstractHandler {
 
     @Override
     String updateHandler(JsonObject json, String user) {
-        return null;
+        JsonObject response = new JsonObject();
+        JsonElement collectionElem = json.get("collection");
+        JsonElement dataElem = json.get("data");
+        if (collectionElem != null && dataElem != null) {
+            String collection = collectionElem.getAsString();
+            JsonObject data = dataElem.getAsJsonObject();
+            database.update(data, collection);
+            response.addProperty("status", "Success");
+            response.add("data", data);
+            response.addProperty("collection", collection);
+        } else {
+            response.addProperty("status", "Failure");
+            response.addProperty("message", "All the listed fields are needed");
+            JsonArray fields = new JsonArray();
+            fields.add("collection");
+            fields.add("data (should have valid 'id' field)");
+            response.add("fields", fields);
+        }
+        return response.toString();
     }
 
     @Override
     String findHandler(JsonObject json, String user) {
-        return null;
+        JsonObject response = new JsonObject();
+        JsonElement collectionElem = json.get("collection");
+        JsonElement fieldElem = json.get("field");
+        JsonElement value = json.get("value");
+        if (collectionElem != null && fieldElem != null && value != null) {
+            String collection = collectionElem.getAsString();
+            String field = fieldElem.getAsString();
+            JsonArray data = database.find(field, value, collection);
+            response.addProperty("status", "Success");
+            response.add("data", data);
+            response.addProperty("collection", collection);
+        } else {
+            response.addProperty("status", "Failure");
+            response.addProperty("message", "All the listed fields are needed");
+            JsonArray fields = new JsonArray();
+            fields.add("collection");
+            fields.add("data (should have valid 'id' field)");
+            response.add("fields", fields);
+        }
+        return response.toString();
     }
 }
