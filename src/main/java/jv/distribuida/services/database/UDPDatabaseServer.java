@@ -1,11 +1,11 @@
-package jv.distribuida;
+package jv.distribuida.services.database;
 
 import jv.distribuida.database.Database;
 import jv.distribuida.network.Message;
 import jv.distribuida.network.RequestHandler;
 import jv.distribuida.network.UDPConnection;
 import jv.distribuida.network.UDPRequestHandler;
-import jv.distribuida.service.DatabaseHandler;
+import jv.distribuida.services.database.DatabaseHandler;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -14,6 +14,8 @@ public class UDPDatabaseServer {
     public static void main(String[] args) throws IOException {
         HashMap<String, Object> collections = new HashMap<>();
         collections.put("Board", new Object());
+        collections.put("Issue", new Object());
+        collections.put("Comment", new Object());
         Database database = new Database(collections);
         RequestHandler handler = new DatabaseHandler(database);
         UDPConnection connection = new UDPConnection(9000);

@@ -11,6 +11,9 @@ public class UDPConnection implements Connection {
     public UDPConnection(int port) throws SocketException {
         this.socket = new DatagramSocket(port);
     }
+    public UDPConnection() throws SocketException {
+        this.socket = new DatagramSocket();
+    }
 
     public void send(Message message) throws IOException {
         byte[] replymsg = message.getText().getBytes();

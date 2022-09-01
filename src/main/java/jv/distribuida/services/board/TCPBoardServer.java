@@ -1,17 +1,16 @@
-package jv.distribuida;
+package jv.distribuida.services.board;
 
 import jv.distribuida.database.DatabaseClient;
 import jv.distribuida.network.RequestHandler;
 import jv.distribuida.network.TCPConnection;
 import jv.distribuida.network.TCPRequestHandler;
-import jv.distribuida.service.BoardHandler;
 
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-public class TCPServer {
+public class TCPBoardServer {
     public static void main(String[] args) throws IOException {
         TCPConnection dbconnection = new TCPConnection(new Socket("localhost", 9000));
         DatabaseClient databaseClient = new DatabaseClient(InetAddress.getLocalHost(), 9000, dbconnection);

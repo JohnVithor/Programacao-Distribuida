@@ -1,11 +1,11 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="UDPDatabaseServer" type="Application" factoryName="Application" nameIsGenerated="true">
-    <option name="MAIN_CLASS_NAME" value="jv.distribuida.UDPDatabaseServer" />
+    <option name="MAIN_CLASS_NAME" value="jv.distribuida.services.database.UDPDatabaseServer" />
     <module name="BoardService" />
     <option name="VM_PARAMETERS" value="--enable-preview" />
     <extension name="coverage">
       <pattern>
-        <option name="PATTERN" value="jv.distribuida.*" />
+        <option name="PATTERN" value="jv.distribuida.services.database.*" />
         <option name="ENABLED" value="true" />
       </pattern>
     </extension>

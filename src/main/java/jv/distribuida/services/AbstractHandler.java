@@ -1,4 +1,4 @@
-package jv.distribuida.service;
+package jv.distribuida.services;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -46,13 +46,13 @@ public abstract class AbstractHandler implements RequestHandler {
         }
     }
 
-    abstract String createHandler(JsonObject json, String user);
+    public  abstract String createHandler(JsonObject json, String user);
 
-    abstract String updateHandler(JsonObject json, String user);
+    public abstract String updateHandler(JsonObject json, String user);
 
-    abstract String getHandler(JsonObject json, String user);
+    public abstract String getHandler(JsonObject json, String user);
 
-    abstract String findHandler(JsonObject json, String user);
+    public abstract String findHandler(JsonObject json, String user);
 
     String defaultHandler(String action) {
         JsonObject response = new JsonObject();

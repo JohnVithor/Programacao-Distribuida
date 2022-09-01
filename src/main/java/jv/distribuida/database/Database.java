@@ -4,6 +4,8 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -11,6 +13,7 @@ import java.util.List;
 public class Database {
     private final HashMap<String, Object> locks;
     private final HashMap<String, ArrayList<JsonObject>> data;
+    private final DateTimeFormatter formatter;
 
     public Database(HashMap<String, Object> collections) {
         this.locks = collections;
@@ -19,12 +22,16 @@ public class Database {
             ArrayList<JsonObject> schema = new ArrayList<>();
             data.put(collection, schema);
         }
+        this.formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
     }
 
     public void save(JsonObject data, String collection) {
         check_collection(collection);
         synchronized (locks.get(collection)) {
+            String time = LocalDateTime.now().format(formatter);
             data.addProperty("id", this.data.get(collection).size());
+            data.addProperty("creation", time);
+            data.addProperty("modification", time);
             this.data.get(collection).add(data);
         }
     }
@@ -55,7 +62,17 @@ public class Database {
         ArrayList<JsonObject> col = this.data.get(collection);
         if (col.size() > id) {
             synchronized (col.get(id)) {
-                col.set(id, new_data);
+                JsonObject old_data = col.get(id);
+                old_data.remove("modification");
+                String time = LocalDateTime.now().format(formatter);
+                old_data.addProperty("modification", time);
+                for (String field :new_data.keySet()) {
+                    if (old_data.has(field)) {
+                        old_data.remove(field);
+                    }
+                    old_data.add(field, new_data.get(field));
+                }
+                col.set(id, old_data);
             }
             return new_data;
         }

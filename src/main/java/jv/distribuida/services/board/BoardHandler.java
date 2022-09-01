@@ -1,19 +1,21 @@
-package jv.distribuida.service;
+package jv.distribuida.services.board;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import jv.distribuida.database.DatabaseClient;
+import jv.distribuida.services.AbstractHandler;
 
 public class BoardHandler extends AbstractHandler {
     private final DatabaseClient databaseClient;
+    private final String COLLECTION = "Board";
 
     public BoardHandler(DatabaseClient databaseClient) {
         this.databaseClient = databaseClient;
     }
 
     @Override
-    String createHandler(JsonObject json, String user) {
+    public String createHandler(JsonObject json, String user) {
         JsonElement nameElem = json.get("name");
         JsonElement descElem = json.get("description");
         if (nameElem != null && descElem != null) {
@@ -22,7 +24,8 @@ public class BoardHandler extends AbstractHandler {
             String description = descElem.getAsString();
             request.addProperty("name", name);
             request.addProperty("description", description);
-            JsonElement response = databaseClient.save(request, "Board");
+            request.addProperty("user", user);
+            JsonElement response = databaseClient.save(request, COLLECTION);
             return response.toString();
         } else {
             JsonObject response = new JsonObject();
@@ -37,10 +40,10 @@ public class BoardHandler extends AbstractHandler {
     }
 
     @Override
-    String getHandler(JsonObject json, String user) {
+    public String getHandler(JsonObject json, String user) {
         JsonElement idElem = json.get("id");
         if (idElem != null) {
-            JsonElement response = databaseClient.get(idElem.getAsInt(), "Board");
+            JsonElement response = databaseClient.get(idElem.getAsInt(), COLLECTION);
             return response.toString();
         } else {
             JsonObject response = new JsonObject();
@@ -54,7 +57,7 @@ public class BoardHandler extends AbstractHandler {
     }
 
     @Override
-    String updateHandler(JsonObject json, String user) {
+    public String updateHandler(JsonObject json, String user) {
         JsonElement idElem = json.get("id");
         JsonElement nameElem = json.get("name");
         JsonElement descElem = json.get("description");
@@ -66,7 +69,7 @@ public class BoardHandler extends AbstractHandler {
             request.addProperty("id", id);
             request.addProperty("name", name);
             request.addProperty("description", description);
-            JsonElement response = databaseClient.update(request, "Board");
+            JsonElement response = databaseClient.update(request, COLLECTION);
             return response.toString();
         } else {
             JsonObject response = new JsonObject();
@@ -82,11 +85,11 @@ public class BoardHandler extends AbstractHandler {
     }
 
     @Override
-    String findHandler(JsonObject json, String user) {
+    public String findHandler(JsonObject json, String user) {
         JsonElement fieldElem = json.get("field");
         JsonElement valueElem = json.get("value");
         if (fieldElem != null && valueElem != null) {
-            JsonElement response = databaseClient.find(fieldElem.getAsString(), valueElem, "Board");
+            JsonElement response = databaseClient.find(fieldElem.getAsString(), valueElem, COLLECTION);
             return response.toString();
         } else {
             JsonObject response = new JsonObject();

@@ -1,9 +1,10 @@
-package jv.distribuida.service;
+package jv.distribuida.services.database;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import jv.distribuida.database.Database;
+import jv.distribuida.services.AbstractHandler;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -25,7 +26,7 @@ public class DatabaseHandler extends AbstractHandler {
     }
 
     @Override
-    String createHandler(JsonObject json, String user) {
+    public String createHandler(JsonObject json, String user) {
         JsonObject response = new JsonObject();
         JsonElement collectionElem = json.get("collection");
         JsonElement dataElem = json.get("data");
@@ -48,7 +49,7 @@ public class DatabaseHandler extends AbstractHandler {
     }
 
     @Override
-    String getHandler(JsonObject json, String user) {
+    public String getHandler(JsonObject json, String user) {
         JsonObject response = new JsonObject();
         JsonElement collectionElem = json.get("collection");
         JsonElement idElem = json.get("id");
@@ -71,7 +72,7 @@ public class DatabaseHandler extends AbstractHandler {
     }
 
     @Override
-    String updateHandler(JsonObject json, String user) {
+    public String updateHandler(JsonObject json, String user) {
         JsonObject response = new JsonObject();
         JsonElement collectionElem = json.get("collection");
         JsonElement dataElem = json.get("data");
@@ -94,7 +95,7 @@ public class DatabaseHandler extends AbstractHandler {
     }
 
     @Override
-    String findHandler(JsonObject json, String user) {
+    public String findHandler(JsonObject json, String user) {
         JsonObject response = new JsonObject();
         JsonElement collectionElem = json.get("collection");
         JsonElement fieldElem = json.get("field");
