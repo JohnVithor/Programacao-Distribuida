@@ -3,18 +3,11 @@ package jv.distribuida.service;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import jv.distribuida.database.Data;
 import jv.distribuida.database.Database;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.net.Socket;
-import java.nio.ByteBuffer;
-import java.nio.charset.StandardCharsets;
-import java.time.LocalDateTime;
-import java.util.List;
 
 public class DatabaseHandler extends AbstractHandler {
     private final Database database;
@@ -23,24 +16,14 @@ public class DatabaseHandler extends AbstractHandler {
 
     public DatabaseHandler(Database database) {
         this.database = database;
-        try{
+        try {
             bos = new ByteArrayOutputStream();
             oos = new ObjectOutputStream(bos);
-        } catch(IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
-//    private String generate_id(JsonObject json) throws IOException {
-//        byte[] data_bytes = json.toString().getBytes(StandardCharsets.UTF_8);
-//        oos.writeObject(LocalDateTime.now());
-//        oos.flush();
-//        byte[] now_bytes = bos.toByteArray();
-//        byte[] allByteArray = new byte[now_bytes.length + data_bytes.length];
-//        ByteBuffer buff = ByteBuffer.wrap(allByteArray);
-//        buff.put(now_bytes);
-//        buff.put(data_bytes);
-//        return buff.array().toString();
-//    }
+
     @Override
     String createHandler(JsonObject json, String user) {
         JsonObject response = new JsonObject();

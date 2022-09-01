@@ -3,7 +3,6 @@ package jv.distribuida.network;
 import java.io.IOException;
 
 public class TCPRequestHandler implements Runnable {
-
     private final TCPConnection connection;
     private final RequestHandler handler;
 

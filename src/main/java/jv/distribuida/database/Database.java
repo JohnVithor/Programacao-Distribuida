@@ -10,23 +10,16 @@ import java.util.List;
 
 public class Database {
     private final HashMap<String, Object> locks;
-
     private final HashMap<String, ArrayList<JsonObject>> data;
 
     public Database(HashMap<String, Object> collections) {
         this.locks = collections;
         this.data = new HashMap<>();
-        for (String collection:collections.keySet()) {
+        for (String collection : collections.keySet()) {
             ArrayList<JsonObject> schema = new ArrayList<>();
             data.put(collection, schema);
         }
     }
-
-//    public void save(String id, JsonObject data, String collection) {
-//        synchronized (locks.get(collection)) {
-//            this.data.get(collection).put(id, data);
-//        }
-//    }
 
     public void save(JsonObject data, String collection) {
         check_collection(collection);
@@ -46,7 +39,7 @@ public class Database {
         JsonArray response = new JsonArray();
         List<JsonObject> filtered = this.data.get(collection)
                 .stream().filter(v -> v.get(field).equals(value)).toList();
-        for (JsonElement e: filtered) {
+        for (JsonElement e : filtered) {
             response.add(e);
         }
         return response;
@@ -54,13 +47,13 @@ public class Database {
 
     public JsonObject update(JsonObject new_data, String collection) {
         JsonElement idElem = new_data.get("id");
-        if(idElem == null) {
+        if (idElem == null) {
             throw new RuntimeException("Field 'id' was not found - Update not possible");
         }
         int id = idElem.getAsInt();
         check_collection(collection);
         ArrayList<JsonObject> col = this.data.get(collection);
-        if (col.size() > id){
+        if (col.size() > id) {
             synchronized (col.get(id)) {
                 col.set(id, new_data);
             }

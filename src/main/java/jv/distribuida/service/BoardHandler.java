@@ -6,7 +6,6 @@ import com.google.gson.JsonObject;
 import jv.distribuida.database.DatabaseClient;
 
 public class BoardHandler extends AbstractHandler {
-
     private final DatabaseClient databaseClient;
 
     public BoardHandler(DatabaseClient databaseClient) {

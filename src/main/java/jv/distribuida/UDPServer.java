@@ -5,7 +5,6 @@ import jv.distribuida.network.Message;
 import jv.distribuida.network.RequestHandler;
 import jv.distribuida.network.UDPConnection;
 import jv.distribuida.network.UDPRequestHandler;
-import jv.distribuida.service.AbstractHandler;
 import jv.distribuida.service.BoardHandler;
 
 import java.io.IOException;
@@ -17,7 +16,7 @@ public class UDPServer {
         DatabaseClient databaseClient = new DatabaseClient(InetAddress.getLocalHost(), 9000, dbconnection);
         RequestHandler handler = new BoardHandler(databaseClient);
         UDPConnection connection = new UDPConnection(8080);
-        while(true) {
+        while (true) {
             Message message = connection.receive();
             Thread.ofVirtual().start(new UDPRequestHandler(connection, message, handler));
         }

@@ -1,10 +1,8 @@
 package jv.distribuida.database;
 
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import java.io.Serializable;
-import java.util.HashMap;
 
 public class Data implements Serializable {
     private String collection;

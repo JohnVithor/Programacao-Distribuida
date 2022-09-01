@@ -12,7 +12,6 @@ import java.net.InetAddress;
 
 public class DatabaseClient {
     private final Connection connection;
-
     private final InetAddress address;
     private final int port;
 
@@ -27,7 +26,7 @@ public class DatabaseClient {
             connection.send(new Message(address, port, request.toString()));
             Message message = connection.receive();
             JsonObject response = JsonParser.parseString(message.getText()).getAsJsonObject();
-            if (response.get("status").getAsString().equals("Success")){
+            if (response.get("status").getAsString().equals("Success")) {
                 return response.get("data");
             } else {
                 throw new RuntimeException(response.get("message").getAsString());
@@ -54,6 +53,7 @@ public class DatabaseClient {
         json.addProperty("id", id);
         return handleResponse(json);
     }
+
     public JsonElement update(JsonObject new_data, String collection) {
         JsonObject json = new JsonObject();
         json.addProperty("action", "UPDATE");
@@ -72,5 +72,4 @@ public class DatabaseClient {
         json.add("value", value);
         return handleResponse(json);
     }
-
 }

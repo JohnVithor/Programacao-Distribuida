@@ -8,7 +8,6 @@ import jv.distribuida.network.Message;
 import jv.distribuida.network.RequestHandler;
 
 public abstract class AbstractHandler implements RequestHandler {
-
     private final String missingAction;
     private final String missingToken;
 
@@ -27,7 +26,7 @@ public abstract class AbstractHandler implements RequestHandler {
                 return message;
             }
             JsonElement userElem = json.get("token");
-            if(userElem == null) {
+            if (userElem == null) {
                 message.setText(missingToken);
                 return message;
             }
@@ -68,7 +67,4 @@ public abstract class AbstractHandler implements RequestHandler {
         response.addProperty("message", message);
         return response.toString();
     }
-
-
-
 }
