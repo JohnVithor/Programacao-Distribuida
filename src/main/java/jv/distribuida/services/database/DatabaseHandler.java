@@ -6,23 +6,11 @@ import com.google.gson.JsonObject;
 import jv.distribuida.database.Database;
 import jv.distribuida.services.AbstractHandler;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.ObjectOutputStream;
-
 public class DatabaseHandler extends AbstractHandler {
     private final Database database;
-    private ByteArrayOutputStream bos;
-    private ObjectOutputStream oos;
 
     public DatabaseHandler(Database database) {
         this.database = database;
-        try {
-            bos = new ByteArrayOutputStream();
-            oos = new ObjectOutputStream(bos);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 
     @Override
@@ -36,7 +24,6 @@ public class DatabaseHandler extends AbstractHandler {
             database.save(data, collection);
             response.addProperty("status", "Success");
             response.add("data", data);
-            response.addProperty("collection", collection);
         } else {
             response.addProperty("status", "Failure");
             response.addProperty("message", "All the listed fields are needed");
@@ -59,7 +46,6 @@ public class DatabaseHandler extends AbstractHandler {
             JsonObject data = database.get(id, collection);
             response.addProperty("status", "Success");
             response.add("data", data);
-            response.addProperty("collection", collection);
         } else {
             response.addProperty("status", "Failure");
             response.addProperty("message", "All the listed fields are needed");
@@ -79,10 +65,8 @@ public class DatabaseHandler extends AbstractHandler {
         if (collectionElem != null && dataElem != null) {
             String collection = collectionElem.getAsString();
             JsonObject data = dataElem.getAsJsonObject();
-            database.update(data, collection);
+            response.add("data", database.update(data, collection));
             response.addProperty("status", "Success");
-            response.add("data", data);
-            response.addProperty("collection", collection);
         } else {
             response.addProperty("status", "Failure");
             response.addProperty("message", "All the listed fields are needed");
@@ -103,10 +87,8 @@ public class DatabaseHandler extends AbstractHandler {
         if (collectionElem != null && fieldElem != null && value != null) {
             String collection = collectionElem.getAsString();
             String field = fieldElem.getAsString();
-            JsonArray data = database.find(field, value, collection);
+            response.add("data", database.find(field, value, collection));
             response.addProperty("status", "Success");
-            response.add("data", data);
-            response.addProperty("collection", collection);
         } else {
             response.addProperty("status", "Failure");
             response.addProperty("message", "All the listed fields are needed");

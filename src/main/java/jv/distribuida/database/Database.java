@@ -45,7 +45,7 @@ public class Database {
         check_collection(collection);
         JsonArray response = new JsonArray();
         List<JsonObject> filtered = this.data.get(collection)
-                .stream().filter(v -> v.get(field).equals(value)).toList();
+                .stream().filter(v -> v.has(field) && v.get(field).equals(value)).toList();
         for (JsonElement e : filtered) {
             response.add(e);
         }
@@ -73,8 +73,8 @@ public class Database {
                     old_data.add(field, new_data.get(field));
                 }
                 col.set(id, old_data);
+                return old_data;
             }
-            return new_data;
         }
         throw new RuntimeException("ID: " + id + " not found on collection: " + collection);
     }

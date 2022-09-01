@@ -1,6 +1,6 @@
 package jv.distribuida.services.issue;
 
-import jv.distribuida.client.BoardClient;
+import jv.distribuida.client.GetClient;
 import jv.distribuida.client.DatabaseClient;
 import jv.distribuida.network.Message;
 import jv.distribuida.network.RequestHandler;
@@ -16,9 +16,9 @@ public class UDPIssueServer {
         DatabaseClient databaseClient = new DatabaseClient(InetAddress.getLocalHost(), 9000, dbConnection);
 
         UDPConnection boardConnection = new UDPConnection();
-        BoardClient boardClient = new BoardClient(InetAddress.getLocalHost(), 8080, boardConnection);
+        GetClient getClient = new GetClient(InetAddress.getLocalHost(), 8080, boardConnection);
 
-        RequestHandler handler = new IssueHandler(databaseClient, boardClient);
+        RequestHandler handler = new IssueHandler(databaseClient, getClient);
         UDPConnection connection = new UDPConnection(8081);
         while (true) {
             Message message = connection.receive();

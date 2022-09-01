@@ -8,13 +8,8 @@ import jv.distribuida.network.Message;
 import jv.distribuida.network.RequestHandler;
 
 public abstract class AbstractHandler implements RequestHandler {
-    private final String missingAction;
-    private final String missingToken;
-
-    public AbstractHandler() {
-        this.missingAction = "{\"status\":\"Failure\",\"message\":\"The 'action' attribute was not found\"}";
-        this.missingToken = "{\"status\":\"Failure\",\"message\":\"The 'token' attribute was not found\"}";
-    }
+    private final static String missingAction = "{\"status\":\"Failure\",\"message\":\"The 'action' attribute was not found\"}";
+    private final static String missingToken = "{\"status\":\"Failure\",\"message\":\"The 'token' attribute was not found\"}";
 
     @Override
     public Message handle(Message message) {
