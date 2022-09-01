@@ -13,8 +13,8 @@ public abstract class AbstractHandler implements RequestHandler {
     private final String missingToken;
 
     public AbstractHandler() {
-        this.missingAction = "{\"status\":\"Failure\",\"Message\":\"The 'action' attribute was not found\"}";
-        this.missingToken = "{\"status\":\"Failure\",\"Message\":\"The 'token' attribute was not found\"}";
+        this.missingAction = "{\"status\":\"Failure\",\"message\":\"The 'action' attribute was not found\"}";
+        this.missingToken = "{\"status\":\"Failure\",\"message\":\"The 'token' attribute was not found\"}";
     }
 
     @Override
@@ -58,14 +58,14 @@ public abstract class AbstractHandler implements RequestHandler {
     String defaultHandler(String action) {
         JsonObject response = new JsonObject();
         response.addProperty("status", "Failure");
-        response.addProperty("Message", "Action: '" + action + "' is not supported");
+        response.addProperty("message", "Action: '" + action + "' is not supported");
         return response.toString();
     }
 
     String exceptionHandler(String message) {
         JsonObject response = new JsonObject();
         response.addProperty("status", "Failure");
-        response.addProperty("Message", message);
+        response.addProperty("message", message);
         return response.toString();
     }
 

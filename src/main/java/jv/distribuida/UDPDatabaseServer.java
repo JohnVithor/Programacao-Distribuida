@@ -1,22 +1,24 @@
 package jv.distribuida;
 
-import jv.distribuida.database.DatabaseClient;
+import jv.distribuida.database.Database;
 import jv.distribuida.network.Message;
 import jv.distribuida.network.RequestHandler;
 import jv.distribuida.network.UDPConnection;
 import jv.distribuida.network.UDPRequestHandler;
-import jv.distribuida.service.AbstractHandler;
 import jv.distribuida.service.BoardHandler;
+import jv.distribuida.service.DatabaseHandler;
 
 import java.io.IOException;
-import java.net.InetAddress;
+import java.util.HashMap;
 
-public class UDPServer {
+public class UDPDatabaseServer {
     public static void main(String[] args) throws IOException {
-        UDPConnection dbconnection = new UDPConnection(9001);
-        DatabaseClient databaseClient = new DatabaseClient(InetAddress.getLocalHost(), 9000, dbconnection);
-        RequestHandler handler = new BoardHandler(databaseClient);
-        UDPConnection connection = new UDPConnection(8080);
+        HashMap<String, Object> collections = new HashMap<>();
+        collections.put("Board", new Object());
+        Database database = new Database(collections);
+
+        RequestHandler handler = new DatabaseHandler(database);
+        UDPConnection connection = new UDPConnection(9000);
         while(true) {
             Message message = connection.receive();
             Thread.ofVirtual().start(new UDPRequestHandler(connection, message, handler));
