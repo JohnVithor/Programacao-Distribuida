@@ -15,7 +15,7 @@ public class UDPBoardServer {
         UDPConnection dbconnection = new UDPConnection();
         DatabaseClient databaseClient = new DatabaseClient(InetAddress.getLocalHost(), 9000, dbconnection);
         RequestHandler handler = new BoardHandlerManager(databaseClient);
-        UDPConnection connection = new UDPConnection(8080);
+        UDPConnection connection = new UDPConnection(9001);
         while (true) {
             Message message = connection.receive();
             Thread.ofVirtual().start(new UDPRequestHandler(connection, message, handler));

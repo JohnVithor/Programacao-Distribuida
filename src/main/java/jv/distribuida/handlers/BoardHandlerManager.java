@@ -79,9 +79,23 @@ public class BoardHandlerManager extends BasicDBHandlerManager {
     }
 
     String findByUserHandler(JsonObject json, String user) {
+        JsonElement pageElem = json.get("page");
+        JsonElement limitElem = json.get("limit");
         JsonObject response = new JsonObject();
-        response.add("data", databaseClient.find("user", new JsonPrimitive(user), collection));
-        response.addProperty("status", "Success");
+        if (pageElem != null && limitElem != null) {
+            long page = pageElem.getAsLong();
+            long limit = limitElem.getAsLong();
+            response.add("data", databaseClient.find("user",
+                    new JsonPrimitive(user), page, limit, collection));
+            response.addProperty("status", "Success");
+        } else {
+            response.addProperty("status", "Failure");
+            response.addProperty("message", "All the listed fields are needed");
+            JsonArray fields = new JsonArray();
+            fields.add("page (first page is 0)");
+            fields.add("limit (items per page)");
+            response.add("fields", fields);
+        }
         return response.toString();
     }
 }

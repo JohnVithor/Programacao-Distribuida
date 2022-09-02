@@ -38,9 +38,14 @@ public abstract class BasicDBHandlerManager extends BasicHandlerManager {
     public String findHandler(JsonObject json, String user) {
         JsonElement fieldElem = json.get("field");
         JsonElement valueElem = json.get("value");
+        JsonElement pageElem = json.get("page");
+        JsonElement limitElem = json.get("limit");
         JsonObject response = new JsonObject();
-        if (fieldElem != null && valueElem != null) {
-            response.add("data", databaseClient.find(fieldElem.getAsString(), valueElem, collection));
+        if (fieldElem != null && valueElem != null && pageElem != null && limitElem != null) {
+            String field = fieldElem.getAsString();
+            long page = pageElem.getAsLong();
+            long limit = limitElem.getAsLong();
+            response.add("data", databaseClient.find(field, valueElem, page, limit, collection));
             response.addProperty("status", "Success");
         } else {
             response.addProperty("status", "Failure");

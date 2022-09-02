@@ -53,13 +53,23 @@ public class CommentHandlerManager extends BasicDBHandlerManager {
 
     public String findByIssueHandler(JsonObject json, String user) {
         JsonElement idIssueElem = json.get("idIssue");
+        JsonElement pageElem = json.get("page");
+        JsonElement limitElem = json.get("limit");
         JsonObject response = new JsonObject();
-        if (idIssueElem != null) {
-            response.add("data", databaseClient.find("idBoard", idIssueElem, collection));
+        if (idIssueElem != null && pageElem != null && limitElem != null) {
+            long page = pageElem.getAsLong();
+            long limit = limitElem.getAsLong();
+            response.add("data", databaseClient.find("idIssue",
+                    idIssueElem, page, limit, collection));
             response.addProperty("status", "Success");
         } else {
             response.addProperty("status", "Failure");
-            response.addProperty("message", "Field idBoard is necessary");
+            response.addProperty("message", "All the listed fields are needed");
+            JsonArray fields = new JsonArray();
+            fields.add("idIssue (valid issue id)");
+            fields.add("page (first page is 0)");
+            fields.add("limit (items per page)");
+            response.add("fields", fields);
         }
         return response.toString();
     }

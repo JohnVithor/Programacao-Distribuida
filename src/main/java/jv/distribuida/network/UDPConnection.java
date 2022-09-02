@@ -22,7 +22,7 @@ public class UDPConnection implements Connection {
     }
 
     public Message receive() throws IOException {
-        byte[] receivemessage = new byte[1024];
+        byte[] receivemessage = new byte[1280000];
         DatagramPacket receivepacket = new DatagramPacket(receivemessage, receivemessage.length);
         socket.receive(receivepacket);
         String text = new String(receivepacket.getData(), 0, receivepacket.getLength());

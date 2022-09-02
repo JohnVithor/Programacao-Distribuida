@@ -63,13 +63,15 @@ public class DatabaseClient {
         return handleResponse(json);
     }
 
-    public JsonElement find(String field, JsonElement value, String collection) {
+    public JsonElement find(String field, JsonElement value, long page, long limit, String collection) {
         JsonObject json = new JsonObject();
         json.addProperty("action", "FIND");
         json.addProperty("token", "Board");
         json.addProperty("collection", collection);
         json.addProperty("field", field);
         json.add("value", value);
+        json.addProperty("page", page);
+        json.addProperty("limit", limit);
         return handleResponse(json);
     }
 }

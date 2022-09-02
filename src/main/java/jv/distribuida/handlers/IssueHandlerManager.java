@@ -154,13 +154,23 @@ public class IssueHandlerManager extends BasicDBHandlerManager {
 
     public String findByBoardHandler(JsonObject json, String user) {
         JsonElement idBoardElem = json.get("idBoard");
+        JsonElement pageElem = json.get("page");
+        JsonElement limitElem = json.get("limit");
         JsonObject response = new JsonObject();
-        if (idBoardElem != null) {
-            response.add("data", databaseClient.find("idBoard", idBoardElem, collection));
+        if (idBoardElem != null && pageElem != null && limitElem != null) {
+            long page = pageElem.getAsLong();
+            long limit = limitElem.getAsLong();
+            response.add("data", databaseClient.find("idBoard",
+                    idBoardElem, page, limit, collection));
             response.addProperty("status", "Success");
         } else {
             response.addProperty("status", "Failure");
-            response.addProperty("message", "Field idBoard is necessary");
+            response.addProperty("message", "All the listed fields are needed");
+            JsonArray fields = new JsonArray();
+            fields.add("idBoard (valid board id)");
+            fields.add("page (first page is 0)");
+            fields.add("limit (items per page)");
+            response.add("fields", fields);
         }
         return response.toString();
     }

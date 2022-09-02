@@ -17,10 +17,10 @@ public class UDPIssueServer {
         DatabaseClient databaseClient = new DatabaseClient(InetAddress.getLocalHost(), 9000, dbConnection);
 
         UDPConnection boardConnection = new UDPConnection();
-        GetClient getClient = new GetClient(InetAddress.getLocalHost(), 8080, boardConnection);
+        GetClient getClient = new GetClient(InetAddress.getLocalHost(), 9001, boardConnection);
 
         RequestHandler handler = new IssueHandlerManager(databaseClient, getClient);
-        UDPConnection connection = new UDPConnection(8081);
+        UDPConnection connection = new UDPConnection(9002);
         while (true) {
             Message message = connection.receive();
             Thread.ofVirtual().start(new UDPRequestHandler(connection, message, handler));

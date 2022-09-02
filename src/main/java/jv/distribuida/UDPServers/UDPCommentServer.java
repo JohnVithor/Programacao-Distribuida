@@ -17,10 +17,10 @@ public class UDPCommentServer {
         DatabaseClient databaseClient = new DatabaseClient(InetAddress.getLocalHost(), 9000, dbconnection);
 
         UDPConnection issueConnection = new UDPConnection();
-        GetClient getClient = new GetClient(InetAddress.getLocalHost(), 8081, issueConnection);
+        GetClient getClient = new GetClient(InetAddress.getLocalHost(), 9002, issueConnection);
 
         RequestHandler handler = new CommentHandlerManager(databaseClient, getClient);
-        UDPConnection connection = new UDPConnection(8082);
+        UDPConnection connection = new UDPConnection(9003);
         while (true) {
             Message message = connection.receive();
             Thread.ofVirtual().start(new UDPRequestHandler(connection, message, handler));
