@@ -17,6 +17,7 @@ public class IssueHandlerManager extends BasicDBHandlerManager {
         handlers.put("CREATE", this::createHandler);
         handlers.put("UPDATE", this::updateHandler);
         handlers.put("MOVE", this::moveHandler);
+        handlers.put("BYBOARD", this::findByBoardHandler);
     }
 
     public String createHandler(JsonObject json, String user) {
@@ -57,39 +58,46 @@ public class IssueHandlerManager extends BasicDBHandlerManager {
     }
 
     public String updateHandler(JsonObject json, String user) {
-        JsonObject response;
+        JsonElement idElem = json.get("id");
+        if (idElem == null) {
+            JsonObject response = new JsonObject();
+            response.addProperty("status", "Failure");
+            response.addProperty("message", "The field id is necessary");
+            return response.toString();
+        }
         JsonElement idBoardElem = json.get("idBoard");
         if (idBoardElem != null) {
-            response = new JsonObject();
+            JsonObject response = new JsonObject();
             response.addProperty("status", "Failure");
             response.addProperty("message", "The idBoard can not be updated, use the action MOVE");
             return response.toString();
         }
-        JsonElement idElem = json.get("id");
         JsonElement nameElem = json.get("name");
         JsonElement descElem = json.get("description");
-        if (idElem != null && nameElem != null && descElem != null) {
-            JsonObject request = new JsonObject();
-            int id = idElem.getAsInt();
-            String name = nameElem.getAsString();
-            String description = descElem.getAsString();
-            request.addProperty("id", id);
-            request.addProperty("name", name);
-            request.addProperty("description", description);
-            response = databaseClient.update(request, collection).getAsJsonObject();
-            response.addProperty("status", "Success");
-        } else {
-            response = new JsonObject();
+        if (nameElem == null && descElem == null) {
+            JsonObject response = new JsonObject();
             response.addProperty("status", "Failure");
-            response.addProperty("message", "All the listed fields are needed");
+            response.addProperty("message", "At least one of the listed fields are needed");
             JsonArray fields = new JsonArray();
-            fields.add("id (valid)");
-            fields.add("idBoard (valid)");
             fields.add("name");
             fields.add("description");
             response.add("fields", fields);
+            return response.toString();
+        } else {
+            JsonObject request = new JsonObject();
+            request.addProperty("id", idElem.getAsInt());
+            if (nameElem != null) {
+                String name = nameElem.getAsString();
+                request.addProperty("name", name);
+            }
+            if (descElem != null) {
+                String description = descElem.getAsString();
+                request.addProperty("description", description);
+            }
+            JsonObject response = databaseClient.update(request, collection).getAsJsonObject();
+            response.addProperty("status", "Success");
+            return response.toString();
         }
-        return response.toString();
     }
 
     public String moveHandler(JsonObject json, String user) {
@@ -140,6 +148,19 @@ public class IssueHandlerManager extends BasicDBHandlerManager {
             fields.add("from (valid board id)");
             fields.add("to (valid board id)");
             response.add("fields", fields);
+        }
+        return response.toString();
+    }
+
+    public String findByBoardHandler(JsonObject json, String user) {
+        JsonElement idBoardElem = json.get("idBoard");
+        JsonObject response = new JsonObject();
+        if (idBoardElem != null) {
+            response.add("data", databaseClient.find("idBoard", idBoardElem, collection));
+            response.addProperty("status", "Success");
+        } else {
+            response.addProperty("status", "Failure");
+            response.addProperty("message", "Field idBoard is necessary");
         }
         return response.toString();
     }

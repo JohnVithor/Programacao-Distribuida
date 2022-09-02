@@ -13,8 +13,9 @@ public class CommentHandlerManager extends BasicDBHandlerManager {
 
     public CommentHandlerManager(DatabaseClient databaseClient, GetClient getClient) {
         super(new HashMap<>(), databaseClient, "Comment");
-        handlers.put("CREATE", this::createHandler);
         this.getClient = getClient;
+        handlers.put("CREATE", this::createHandler);
+        handlers.put("BYISSUE", this::findByIssueHandler);
     }
 
     public String createHandler(JsonObject json, String user) {
@@ -46,6 +47,19 @@ public class CommentHandlerManager extends BasicDBHandlerManager {
             fields.add("idIssue");
             fields.add("content");
             response.add("fields", fields);
+        }
+        return response.toString();
+    }
+
+    public String findByIssueHandler(JsonObject json, String user) {
+        JsonElement idIssueElem = json.get("idIssue");
+        JsonObject response = new JsonObject();
+        if (idIssueElem != null) {
+            response.add("data", databaseClient.find("idBoard", idIssueElem, collection));
+            response.addProperty("status", "Success");
+        } else {
+            response.addProperty("status", "Failure");
+            response.addProperty("message", "Field idBoard is necessary");
         }
         return response.toString();
     }
