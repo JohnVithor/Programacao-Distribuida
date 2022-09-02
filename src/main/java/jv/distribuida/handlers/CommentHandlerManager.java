@@ -1,22 +1,22 @@
-package jv.distribuida.services.comment;
+package jv.distribuida.handlers;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import jv.distribuida.client.DatabaseClient;
 import jv.distribuida.client.GetClient;
-import jv.distribuida.services.AbstractDBHandler;
-import jv.distribuida.services.AbstractHandler;
 
-public class CommentHandler extends AbstractDBHandler {
+import java.util.HashMap;
+
+public class CommentHandlerManager extends BasicDBHandlerManager {
     private final GetClient getClient;
 
-    public CommentHandler(DatabaseClient databaseClient, GetClient getClient) {
-        super(databaseClient, "Comment");
+    public CommentHandlerManager(DatabaseClient databaseClient, GetClient getClient) {
+        super(new HashMap<>(), databaseClient, "Comment");
+        handlers.put("CREATE", this::createHandler);
         this.getClient = getClient;
     }
 
-    @Override
     public String createHandler(JsonObject json, String user) {
         JsonElement idIssueElem = json.get("idIssue");
         JsonElement contentElem = json.get("content");
@@ -47,14 +47,6 @@ public class CommentHandler extends AbstractDBHandler {
             fields.add("content");
             response.add("fields", fields);
         }
-        return response.toString();
-    }
-
-    @Override
-    public String updateHandler(JsonObject json, String user) {
-        JsonObject response = new JsonObject();
-        response.addProperty("status", "Failure");
-        response.addProperty("message", "Update a comment is not supported");
         return response.toString();
     }
 }

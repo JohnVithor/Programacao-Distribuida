@@ -1,4 +1,4 @@
-package jv.distribuida.services.comment;
+package jv.distribuida.UDPServers;
 
 import jv.distribuida.client.DatabaseClient;
 import jv.distribuida.client.GetClient;
@@ -6,6 +6,7 @@ import jv.distribuida.network.Message;
 import jv.distribuida.network.RequestHandler;
 import jv.distribuida.network.UDPConnection;
 import jv.distribuida.network.UDPRequestHandler;
+import jv.distribuida.handlers.CommentHandlerManager;
 
 import java.io.IOException;
 import java.net.InetAddress;
@@ -18,7 +19,7 @@ public class UDPCommentServer {
         UDPConnection issueConnection = new UDPConnection();
         GetClient getClient = new GetClient(InetAddress.getLocalHost(), 8081, issueConnection);
 
-        RequestHandler handler = new CommentHandler(databaseClient, getClient);
+        RequestHandler handler = new CommentHandlerManager(databaseClient, getClient);
         UDPConnection connection = new UDPConnection(8082);
         while (true) {
             Message message = connection.receive();

@@ -1,4 +1,4 @@
-package jv.distribuida.services.issue;
+package jv.distribuida.UDPServers;
 
 import jv.distribuida.client.GetClient;
 import jv.distribuida.client.DatabaseClient;
@@ -6,6 +6,7 @@ import jv.distribuida.network.Message;
 import jv.distribuida.network.RequestHandler;
 import jv.distribuida.network.UDPConnection;
 import jv.distribuida.network.UDPRequestHandler;
+import jv.distribuida.handlers.IssueHandlerManager;
 
 import java.io.IOException;
 import java.net.InetAddress;
@@ -18,7 +19,7 @@ public class UDPIssueServer {
         UDPConnection boardConnection = new UDPConnection();
         GetClient getClient = new GetClient(InetAddress.getLocalHost(), 8080, boardConnection);
 
-        RequestHandler handler = new IssueHandler(databaseClient, getClient);
+        RequestHandler handler = new IssueHandlerManager(databaseClient, getClient);
         UDPConnection connection = new UDPConnection(8081);
         while (true) {
             Message message = connection.receive();

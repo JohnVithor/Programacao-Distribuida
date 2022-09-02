@@ -1,4 +1,4 @@
-package jv.distribuida.services;
+package jv.distribuida.handlers;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -7,9 +7,25 @@ import com.google.gson.JsonSyntaxException;
 import jv.distribuida.network.Message;
 import jv.distribuida.network.RequestHandler;
 
-public abstract class AbstractHandler implements RequestHandler {
+import java.util.HashMap;
+
+public abstract class BasicHandlerManager implements RequestHandler {
     private final static String missingAction = "{\"status\":\"Failure\",\"message\":\"The 'action' attribute was not found\"}";
     private final static String missingToken = "{\"status\":\"Failure\",\"message\":\"The 'token' attribute was not found\"}";
+    protected final HashMap<String, ActionHandler> handlers;
+    protected final ActionHandler defaultHandler;
+
+    public BasicHandlerManager(HashMap<String, ActionHandler> handlers) {
+        this.handlers = handlers;
+        this.defaultHandler = (json, user) -> {
+            JsonElement actionElem = json.get("action");
+            String action = actionElem.getAsString();
+            JsonObject response = new JsonObject();
+            response.addProperty("status", "Failure");
+            response.addProperty("message", "Action: '" + action + "' is not supported");
+            return response.toString();
+        };
+    }
 
     @Override
     public Message handle(Message message) {
@@ -27,33 +43,13 @@ public abstract class AbstractHandler implements RequestHandler {
             }
             String action = actionElem.getAsString();
             String user = userElem.getAsString();
-            switch (action) {
-                case "CREATE" -> message.setText(createHandler(json, user));
-                case "UPDATE" -> message.setText(updateHandler(json, user));
-                case "GET" -> message.setText(getHandler(json, user));
-                case "FIND" -> message.setText(findHandler(json, user));
-                default -> message.setText(defaultHandler(action));
-            }
+            ActionHandler handler = handlers.getOrDefault(action, defaultHandler);
+            message.setText(handler.execute(json, user));
             return message;
         } catch (JsonSyntaxException | IllegalStateException e) {
             message.setText(exceptionHandler(e.getMessage()));
             return message;
         }
-    }
-
-    public  abstract String createHandler(JsonObject json, String user);
-
-    public abstract String updateHandler(JsonObject json, String user);
-
-    public abstract String getHandler(JsonObject json, String user);
-
-    public abstract String findHandler(JsonObject json, String user);
-
-    String defaultHandler(String action) {
-        JsonObject response = new JsonObject();
-        response.addProperty("status", "Failure");
-        response.addProperty("message", "Action: '" + action + "' is not supported");
-        return response.toString();
     }
 
     String exceptionHandler(String message) {

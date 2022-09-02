@@ -1,23 +1,23 @@
-package jv.distribuida.services;
+package jv.distribuida.handlers;
 
 import com.google.gson.*;
 import jv.distribuida.client.DatabaseClient;
 
-public abstract class AbstractDBHandler extends AbstractHandler {
+import java.util.HashMap;
+
+public abstract class BasicDBHandlerManager extends BasicHandlerManager {
 
     protected final DatabaseClient databaseClient;
     protected final String collection;
 
-    public AbstractDBHandler(DatabaseClient databaseClient, String collection) {
+    public BasicDBHandlerManager(HashMap<String, ActionHandler> handlers, DatabaseClient databaseClient, String collection) {
+        super(handlers);
         this.databaseClient = databaseClient;
         this.collection = collection;
+        handlers.put("GET", this::getHandler);
+        handlers.put("FIND", this::findHandler);
     }
 
-    public abstract String createHandler(JsonObject json, String user);
-
-    public abstract String updateHandler(JsonObject json, String user);
-
-    @Override
     public String getHandler(JsonObject json, String user) {
         JsonElement idElem = json.get("id");
         JsonObject response;
@@ -35,7 +35,6 @@ public abstract class AbstractDBHandler extends AbstractHandler {
         return response.toString();
     }
 
-    @Override
     public String findHandler(JsonObject json, String user) {
         JsonElement fieldElem = json.get("field");
         JsonElement valueElem = json.get("value");
@@ -53,6 +52,4 @@ public abstract class AbstractDBHandler extends AbstractHandler {
         }
         return response.toString();
     }
-
-
 }

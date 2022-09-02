@@ -1,19 +1,24 @@
-package jv.distribuida.services.database;
+package jv.distribuida.handlers;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import jv.distribuida.database.Database;
-import jv.distribuida.services.AbstractHandler;
 
-public class DatabaseHandler extends AbstractHandler {
+import java.util.HashMap;
+
+public class DatabaseHandlerManager extends BasicHandlerManager {
     private final Database database;
 
-    public DatabaseHandler(Database database) {
+    public DatabaseHandlerManager(Database database) {
+        super(new HashMap<>());
         this.database = database;
+        handlers.put("CREATE", this::createHandler);
+        handlers.put("UPDATE", this::updateHandler);
+        handlers.put("GET", this::getHandler);
+        handlers.put("FIND", this::findHandler);
     }
 
-    @Override
     public String createHandler(JsonObject json, String user) {
         JsonObject response = new JsonObject();
         JsonElement collectionElem = json.get("collection");
@@ -35,7 +40,6 @@ public class DatabaseHandler extends AbstractHandler {
         return response.toString();
     }
 
-    @Override
     public String getHandler(JsonObject json, String user) {
         JsonObject response = new JsonObject();
         JsonElement collectionElem = json.get("collection");
@@ -57,7 +61,6 @@ public class DatabaseHandler extends AbstractHandler {
         return response.toString();
     }
 
-    @Override
     public String updateHandler(JsonObject json, String user) {
         JsonObject response = new JsonObject();
         JsonElement collectionElem = json.get("collection");
@@ -78,7 +81,6 @@ public class DatabaseHandler extends AbstractHandler {
         return response.toString();
     }
 
-    @Override
     public String findHandler(JsonObject json, String user) {
         JsonObject response = new JsonObject();
         JsonElement collectionElem = json.get("collection");

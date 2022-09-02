@@ -1,18 +1,20 @@
-package jv.distribuida.services.board;
+package jv.distribuida.handlers;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import jv.distribuida.client.DatabaseClient;
-import jv.distribuida.services.AbstractDBHandler;
 
-public class BoardHandler extends AbstractDBHandler {
+import java.util.HashMap;
 
-    public BoardHandler(DatabaseClient databaseClient) {
-        super(databaseClient, "Board");
+public class BoardHandlerManager extends BasicDBHandlerManager {
+
+    public BoardHandlerManager(DatabaseClient databaseClient) {
+        super(new HashMap<>(), databaseClient, "Board");
+        handlers.put("CREATE", this::createHandler);
+        handlers.put("UPDATE", this::updateHandler);
     }
 
-    @Override
     public String createHandler(JsonObject json, String user) {
         JsonElement nameElem = json.get("name");
         JsonElement descElem = json.get("description");
@@ -38,7 +40,6 @@ public class BoardHandler extends AbstractDBHandler {
         return response.toString();
     }
 
-    @Override
     public String updateHandler(JsonObject json, String user) {
         JsonElement idElem = json.get("id");
         JsonElement nameElem = json.get("name");
