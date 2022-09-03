@@ -23,7 +23,6 @@ public class CommentHandlerManager extends BasicDBHandlerManager {
         JsonElement contentElem = json.get("content");
         JsonObject response;
         if (idIssueElem != null && contentElem != null) {
-            JsonObject request = new JsonObject();
             int idIssue = idIssueElem.getAsInt();
             JsonObject issue = getClient.get(idIssue, user);
             if (issue.get("status").getAsString().equals("Failure")) {
@@ -32,6 +31,7 @@ public class CommentHandlerManager extends BasicDBHandlerManager {
                 response.addProperty("message", "The issue of id: "
                         + issue + "does not exist");
             } else {
+                JsonObject request = new JsonObject();
                 String content = contentElem.getAsString();
                 request.addProperty("idIssue", idIssue);
                 request.addProperty("content", content);

@@ -10,7 +10,7 @@ public abstract class BasicDBHandlerManager extends BasicHandlerManager {
     protected final DatabaseClient databaseClient;
     protected final String collection;
 
-    public BasicDBHandlerManager(HashMap<String, ActionHandler> handlers, DatabaseClient databaseClient, String collection) {
+    public BasicDBHandlerManager(HashMap<String, AuthActionHandler> handlers, DatabaseClient databaseClient, String collection) {
         super(handlers);
         this.databaseClient = databaseClient;
         this.collection = collection;

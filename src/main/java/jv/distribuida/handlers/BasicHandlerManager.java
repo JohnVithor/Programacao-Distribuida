@@ -12,10 +12,10 @@ import java.util.HashMap;
 public abstract class BasicHandlerManager implements RequestHandler {
     private final static String missingAction = "{\"status\":\"Failure\",\"message\":\"The 'action' attribute was not found\"}";
     private final static String missingToken = "{\"status\":\"Failure\",\"message\":\"The 'token' attribute was not found\"}";
-    protected final HashMap<String, ActionHandler> handlers;
-    protected final ActionHandler defaultHandler;
+    protected final HashMap<String, AuthActionHandler> handlers;
+    protected final AuthActionHandler defaultHandler;
 
-    public BasicHandlerManager(HashMap<String, ActionHandler> handlers) {
+    public BasicHandlerManager(HashMap<String, AuthActionHandler> handlers) {
         this.handlers = handlers;
         this.defaultHandler = (json, user) -> {
             JsonElement actionElem = json.get("action");
@@ -43,7 +43,7 @@ public abstract class BasicHandlerManager implements RequestHandler {
             }
             String action = actionElem.getAsString();
             String user = userElem.getAsString();
-            ActionHandler handler = handlers.getOrDefault(action, defaultHandler);
+            AuthActionHandler handler = handlers.getOrDefault(action, defaultHandler);
             message.setText(handler.execute(json, user));
             return message;
         } catch (JsonSyntaxException | IllegalStateException e) {
