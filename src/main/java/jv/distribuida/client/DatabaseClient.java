@@ -36,10 +36,10 @@ public class DatabaseClient {
         }
     }
 
-    public JsonElement save(JsonObject data, String collection) {
+    public JsonElement save(JsonObject data, String collection, String token) {
         JsonObject json = new JsonObject();
         json.addProperty("action", "CREATE");
-        json.addProperty("token", "Board");
+        json.addProperty("token", token);
         json.addProperty("collection", collection);
         json.add("data", data);
         return handleResponse(json);

@@ -41,7 +41,7 @@ public class IssueHandlerManager extends BasicDBHandlerManager {
                 request.addProperty("name", name);
                 request.addProperty("description", description);
                 request.addProperty("user", user);
-                response = databaseClient.save(request, collection).getAsJsonObject();
+                response = databaseClient.save(request, collection, "issue").getAsJsonObject();
                 response.addProperty("status", "Success");
             }
         } else {

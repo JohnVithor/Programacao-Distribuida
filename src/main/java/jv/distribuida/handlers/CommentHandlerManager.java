@@ -36,7 +36,7 @@ public class CommentHandlerManager extends BasicDBHandlerManager {
                 request.addProperty("idIssue", idIssue);
                 request.addProperty("content", content);
                 request.addProperty("user", user);
-                response = databaseClient.save(request, collection).getAsJsonObject();
+                response = databaseClient.save(request, collection, "comment").getAsJsonObject();
                 response.addProperty("status", "Success");
             }
         } else {

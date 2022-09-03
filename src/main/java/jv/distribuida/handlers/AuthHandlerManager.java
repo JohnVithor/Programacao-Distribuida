@@ -31,8 +31,13 @@ public class AuthHandlerManager implements RequestHandler {
         };
         this.formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
         this.handlers = new HashMap<>();
-        handlers.put("login", this::loginHandler);
-        handlers.put("authorize", this::authorizeHandler);
+        handlers.put("LOGIN", this::loginHandler);
+        handlers.put("AUTHORIZE", this::authorizeHandler);
+
+        JsonObject request = new JsonObject();
+        request.addProperty("username", "jv");
+        request.addProperty("password", "123");
+        JsonObject response = databaseClient.save(request, collection, "auth").getAsJsonObject();
 
     }
 
@@ -62,7 +67,7 @@ public class AuthHandlerManager implements RequestHandler {
         if (usernameElem != null && passwordElem != null) {
             String username = usernameElem.getAsString();
             String password = passwordElem.getAsString();
-            JsonArray result = databaseClient.find("user", usernameElem, 0, 1, collection).getAsJsonArray();
+            JsonArray result = databaseClient.find("username", usernameElem, 0, 1, collection).getAsJsonArray();
             if (!result.isEmpty()) {
                 JsonObject user = result.get(0).getAsJsonObject();
                 String hashpass = user.get("password").getAsString();

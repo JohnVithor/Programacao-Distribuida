@@ -28,7 +28,7 @@ public class BoardHandlerManager extends BasicDBHandlerManager {
             request.addProperty("name", name);
             request.addProperty("description", description);
             request.addProperty("user", user);
-            response = databaseClient.save(request, collection).getAsJsonObject();
+            response = databaseClient.save(request, collection, "board").getAsJsonObject();
             response.addProperty("status", "Success");
         } else {
             response = new JsonObject();

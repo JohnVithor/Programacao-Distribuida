@@ -16,6 +16,7 @@ public class UDPDatabaseServer {
         collections.put("Board", new Object());
         collections.put("Issue", new Object());
         collections.put("Comment", new Object());
+        collections.put("Auth", new Object());
         Database database = new Database(collections);
         RequestHandler handler = new DatabaseHandlerManager(database);
         UDPConnection connection = new UDPConnection(9000);
