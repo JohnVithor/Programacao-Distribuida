@@ -45,28 +45,28 @@ public class DatabaseClient {
         return handleResponse(json);
     }
 
-    public JsonElement get(int id, String collection) {
+    public JsonElement get(int id, String collection, String token) {
         JsonObject json = new JsonObject();
         json.addProperty("action", "GET");
-        json.addProperty("token", "Board");
+        json.addProperty("token", token);
         json.addProperty("collection", collection);
         json.addProperty("id", id);
         return handleResponse(json);
     }
 
-    public JsonElement update(JsonObject new_data, String collection) {
+    public JsonElement update(JsonObject new_data, String collection, String token) {
         JsonObject json = new JsonObject();
         json.addProperty("action", "UPDATE");
-        json.addProperty("token", "Board");
+        json.addProperty("token", token);
         json.addProperty("collection", collection);
         json.add("data", new_data);
         return handleResponse(json);
     }
 
-    public JsonElement find(String field, JsonElement value, long page, long limit, String collection) {
+    public JsonElement find(String field, JsonElement value, long page, long limit, String collection, String token) {
         JsonObject json = new JsonObject();
         json.addProperty("action", "FIND");
-        json.addProperty("token", "Board");
+        json.addProperty("token", token);
         json.addProperty("collection", collection);
         json.addProperty("field", field);
         json.add("value", value);

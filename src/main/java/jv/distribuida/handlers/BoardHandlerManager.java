@@ -17,7 +17,7 @@ public class BoardHandlerManager extends BasicDBHandlerManager {
         handlers.put("BYUSER", this::findByUserHandler);
     }
 
-    public String createHandler(JsonObject json, String user) {
+    public String createHandler(JsonObject json, String token) {
         JsonElement nameElem = json.get("name");
         JsonElement descElem = json.get("description");
         JsonObject response;
@@ -27,7 +27,7 @@ public class BoardHandlerManager extends BasicDBHandlerManager {
             String description = descElem.getAsString();
             request.addProperty("name", name);
             request.addProperty("description", description);
-            request.addProperty("user", user);
+            request.addProperty("user", getUser(token));
             response = databaseClient.save(request, collection, "board").getAsJsonObject();
             response.addProperty("status", "Success");
         } else {
@@ -42,7 +42,7 @@ public class BoardHandlerManager extends BasicDBHandlerManager {
         return response.toString();
     }
 
-    public String updateHandler(JsonObject json, String user) {
+    public String updateHandler(JsonObject json, String token) {
         JsonElement idElem = json.get("id");
         if (idElem == null) {
             JsonObject response = new JsonObject();
@@ -72,13 +72,13 @@ public class BoardHandlerManager extends BasicDBHandlerManager {
                 String description = descElem.getAsString();
                 request.addProperty("description", description);
             }
-            JsonObject response = databaseClient.update(request, collection).getAsJsonObject();
+            JsonObject response = databaseClient.update(request, collection, token).getAsJsonObject();
             response.addProperty("status", "Success");
             return response.toString();
         }
     }
 
-    String findByUserHandler(JsonObject json, String user) {
+    String findByUserHandler(JsonObject json, String token) {
         JsonElement pageElem = json.get("page");
         JsonElement limitElem = json.get("limit");
         JsonObject response = new JsonObject();
@@ -86,7 +86,7 @@ public class BoardHandlerManager extends BasicDBHandlerManager {
             long page = pageElem.getAsLong();
             long limit = limitElem.getAsLong();
             response.add("data", databaseClient.find("user",
-                    new JsonPrimitive(user), page, limit, collection));
+                    new JsonPrimitive(getUser(token)), page, limit, collection, token));
             response.addProperty("status", "Success");
         } else {
             response.addProperty("status", "Failure");

@@ -67,7 +67,7 @@ public class AuthHandlerManager implements RequestHandler {
         if (usernameElem != null && passwordElem != null) {
             String username = usernameElem.getAsString();
             String password = passwordElem.getAsString();
-            JsonArray result = databaseClient.find("username", usernameElem, 0, 1, collection).getAsJsonArray();
+            JsonArray result = databaseClient.find("username", usernameElem, 0, 1, collection, "AUTH").getAsJsonArray();
             if (!result.isEmpty()) {
                 JsonObject user = result.get(0).getAsJsonObject();
                 String hashpass = user.get("password").getAsString();

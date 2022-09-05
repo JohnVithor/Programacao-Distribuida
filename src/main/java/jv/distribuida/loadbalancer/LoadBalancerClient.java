@@ -1,4 +1,4 @@
-package jv.distribuida.client;
+package jv.distribuida.loadbalancer;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -9,12 +9,12 @@ import jv.distribuida.network.Message;
 import java.io.IOException;
 import java.net.InetAddress;
 
-public class GetClient {
+public class LoadBalancerClient {
     private final Connection connection;
     private final InetAddress address;
     private final int port;
 
-    public GetClient(InetAddress address, int port, Connection connection) {
+    public LoadBalancerClient(InetAddress address, int port, Connection connection) {
         this.connection = connection;
         this.address = address;
         this.port = port;
@@ -30,11 +30,12 @@ public class GetClient {
         }
     }
 
-    public JsonObject get(int id, String token) {
+    public JsonObject register(String service, String address, int port, boolean auth) {
         JsonObject json = new JsonObject();
-        json.addProperty("action", "GET");
-        json.addProperty("token", token);
-        json.addProperty("id", id);
+        json.addProperty("service", service);
+        json.addProperty("address", address);
+        json.addProperty("port", port);
+        json.addProperty("auth", auth);
         return handleResponse(json);
     }
 }

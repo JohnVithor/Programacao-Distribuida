@@ -17,7 +17,7 @@ public abstract class BasicHandlerManager implements RequestHandler {
 
     public BasicHandlerManager(HashMap<String, AuthActionHandler> handlers) {
         this.handlers = handlers;
-        this.defaultHandler = (json, user) -> {
+        this.defaultHandler = (json, token) -> {
             JsonElement actionElem = json.get("action");
             String action = actionElem.getAsString();
             JsonObject response = new JsonObject();
@@ -36,15 +36,15 @@ public abstract class BasicHandlerManager implements RequestHandler {
                 message.setText(missingAction);
                 return message;
             }
-            JsonElement userElem = json.get("token");
-            if (userElem == null) {
+            JsonElement tokenElem = json.get("token");
+            if (tokenElem == null) {
                 message.setText(missingToken);
                 return message;
             }
             String action = actionElem.getAsString();
-            String user = userElem.getAsString();
+            String token = tokenElem.getAsString();
             AuthActionHandler handler = handlers.getOrDefault(action, defaultHandler);
-            message.setText(handler.execute(json, user));
+            message.setText(handler.execute(json, token));
             return message;
         } catch (JsonSyntaxException | IllegalStateException e) {
             message.setText(exceptionHandler(e.getMessage()));
@@ -52,10 +52,15 @@ public abstract class BasicHandlerManager implements RequestHandler {
         }
     }
 
-    String exceptionHandler(String message) {
+    public String exceptionHandler(String message) {
         JsonObject response = new JsonObject();
         response.addProperty("status", "Failure");
         response.addProperty("message", message);
         return response.toString();
+    }
+
+    public String getUser(String token) {
+        //TODO:
+        return token;
     }
 }

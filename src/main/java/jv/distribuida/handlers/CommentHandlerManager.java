@@ -18,13 +18,13 @@ public class CommentHandlerManager extends BasicDBHandlerManager {
         handlers.put("BYISSUE", this::findByIssueHandler);
     }
 
-    public String createHandler(JsonObject json, String user) {
+    public String createHandler(JsonObject json, String token) {
         JsonElement idIssueElem = json.get("idIssue");
         JsonElement contentElem = json.get("content");
         JsonObject response;
         if (idIssueElem != null && contentElem != null) {
             int idIssue = idIssueElem.getAsInt();
-            JsonObject issue = getClient.get(idIssue, user);
+            JsonObject issue = getClient.get(idIssue, token);
             if (issue.get("status").getAsString().equals("Failure")) {
                 response = new JsonObject();
                 response.addProperty("status", "Failure");
@@ -35,7 +35,7 @@ public class CommentHandlerManager extends BasicDBHandlerManager {
                 String content = contentElem.getAsString();
                 request.addProperty("idIssue", idIssue);
                 request.addProperty("content", content);
-                request.addProperty("user", user);
+                request.addProperty("user", getUser(token));
                 response = databaseClient.save(request, collection, "comment").getAsJsonObject();
                 response.addProperty("status", "Success");
             }
@@ -51,7 +51,7 @@ public class CommentHandlerManager extends BasicDBHandlerManager {
         return response.toString();
     }
 
-    public String findByIssueHandler(JsonObject json, String user) {
+    public String findByIssueHandler(JsonObject json, String token) {
         JsonElement idIssueElem = json.get("idIssue");
         JsonElement pageElem = json.get("page");
         JsonElement limitElem = json.get("limit");
@@ -60,7 +60,7 @@ public class CommentHandlerManager extends BasicDBHandlerManager {
             long page = pageElem.getAsLong();
             long limit = limitElem.getAsLong();
             response.add("data", databaseClient.find("idIssue",
-                    idIssueElem, page, limit, collection));
+                    idIssueElem, page, limit, collection, token));
             response.addProperty("status", "Success");
         } else {
             response.addProperty("status", "Failure");

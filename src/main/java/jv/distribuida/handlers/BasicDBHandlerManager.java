@@ -18,11 +18,11 @@ public abstract class BasicDBHandlerManager extends BasicHandlerManager {
         handlers.put("FIND", this::findHandler);
     }
 
-    public String getHandler(JsonObject json, String user) {
+    public String getHandler(JsonObject json, String token) {
         JsonElement idElem = json.get("id");
         JsonObject response;
         if (idElem != null) {
-            response = databaseClient.get(idElem.getAsInt(), collection).getAsJsonObject();
+            response = databaseClient.get(idElem.getAsInt(), collection, token).getAsJsonObject();
             response.addProperty("status", "Success");
         } else {
             response = new JsonObject();
@@ -35,7 +35,7 @@ public abstract class BasicDBHandlerManager extends BasicHandlerManager {
         return response.toString();
     }
 
-    public String findHandler(JsonObject json, String user) {
+    public String findHandler(JsonObject json, String token) {
         JsonElement fieldElem = json.get("field");
         JsonElement valueElem = json.get("value");
         JsonElement pageElem = json.get("page");
@@ -45,7 +45,7 @@ public abstract class BasicDBHandlerManager extends BasicHandlerManager {
             String field = fieldElem.getAsString();
             long page = pageElem.getAsLong();
             long limit = limitElem.getAsLong();
-            response.add("data", databaseClient.find(field, valueElem, page, limit, collection));
+            response.add("data", databaseClient.find(field, valueElem, page, limit, collection, token));
             response.addProperty("status", "Success");
         } else {
             response.addProperty("status", "Failure");

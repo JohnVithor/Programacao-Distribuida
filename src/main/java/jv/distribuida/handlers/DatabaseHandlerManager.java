@@ -19,7 +19,7 @@ public class DatabaseHandlerManager extends BasicHandlerManager {
         handlers.put("FIND", this::findHandler);
     }
 
-    public String createHandler(JsonObject json, String user) {
+    public String createHandler(JsonObject json, String token) {
         JsonObject response = new JsonObject();
         JsonElement collectionElem = json.get("collection");
         JsonElement dataElem = json.get("data");
@@ -39,7 +39,7 @@ public class DatabaseHandlerManager extends BasicHandlerManager {
         return response.toString();
     }
 
-    public String getHandler(JsonObject json, String user) {
+    public String getHandler(JsonObject json, String token) {
         JsonObject response = new JsonObject();
         JsonElement collectionElem = json.get("collection");
         JsonElement idElem = json.get("id");
@@ -60,7 +60,7 @@ public class DatabaseHandlerManager extends BasicHandlerManager {
         return response.toString();
     }
 
-    public String updateHandler(JsonObject json, String user) {
+    public String updateHandler(JsonObject json, String token) {
         JsonObject response = new JsonObject();
         JsonElement collectionElem = json.get("collection");
         JsonElement dataElem = json.get("data");
@@ -80,7 +80,7 @@ public class DatabaseHandlerManager extends BasicHandlerManager {
         return response.toString();
     }
 
-    public String findHandler(JsonObject json, String user) {
+    public String findHandler(JsonObject json, String token) {
         JsonObject response = new JsonObject();
         JsonElement collectionElem = json.get("collection");
         JsonElement fieldElem = json.get("field");
