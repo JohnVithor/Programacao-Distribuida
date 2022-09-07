@@ -11,6 +11,8 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 public class LoadBalancerHandlerManager implements RequestHandler {
 
@@ -18,11 +20,12 @@ public class LoadBalancerHandlerManager implements RequestHandler {
     private final static String targetNotFound = "{\"status\":\"Failure\",\"message\":\"Target: $$$ was not found\"}";
     protected final HashMap<String, ServiceInfo> services;
     protected final ConnectionType type;
+    private final ScheduledThreadPoolExecutor heartBeatExecutor = new ScheduledThreadPoolExecutor(1);
 
     public LoadBalancerHandlerManager(ConnectionType type) {
         this.services = new HashMap<>();
         this.type = type;
-        Thread.ofVirtual().start(this::heartbeat);
+        heartBeatExecutor.scheduleWithFixedDelay(this::heartbeat, 5, 5, TimeUnit.SECONDS);
     }
 
     @Override
@@ -48,18 +51,13 @@ public class LoadBalancerHandlerManager implements RequestHandler {
     }
 
     void heartbeat() {
-        try {
-            // TODO rever isso aqui
-            while (true) {
-                for (String key: services.keySet().stream().toList()) {
-                    if (!services.get(key).heartbeat()) {
-                        services.remove(key);
-                    }
-                }
-                Thread.sleep(1000);
+        for (String key: services.keySet().stream().toList()) {
+            if (!services.get(key).heartbeat()) {
+                System.out.println(key + " removed!");
+                services.remove(key);
+            } else {
+                System.out.println(key + " alive!");
             }
-        } catch (InterruptedException e) {
-            heartbeat();
         }
     }
 
@@ -89,6 +87,7 @@ public class LoadBalancerHandlerManager implements RequestHandler {
         JsonObject response = new JsonObject();
         if (serviceElem != null && addressElem != null && portElem != null && authElem != null) {
             String service = serviceElem.getAsString();
+            System.out.println("Olá " + service);
             String address = addressElem.getAsString();
             int port = portElem.getAsInt();
             boolean auth = authElem.getAsBoolean();

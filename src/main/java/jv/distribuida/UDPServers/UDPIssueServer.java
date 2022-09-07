@@ -1,5 +1,6 @@
 package jv.distribuida.UDPServers;
 
+import com.google.gson.JsonObject;
 import jv.distribuida.client.GetClient;
 import jv.distribuida.client.DatabaseClient;
 import jv.distribuida.network.Message;
@@ -21,6 +22,17 @@ public class UDPIssueServer {
 
         RequestHandler handler = new IssueHandlerManager(databaseClient, getClient);
         UDPConnection connection = new UDPConnection(9002);
+
+        JsonObject json = new JsonObject();
+        json.addProperty("target", "LoadBalancer");
+        json.addProperty("service", "Issue");
+        json.addProperty("address", "localhost");
+        json.addProperty("port", 9002);
+        json.addProperty("auth", true);
+        connection.send(new Message(InetAddress.getLocalHost(), 9005, json.toString()));
+        Message m = connection.receive();
+        System.out.println(m.getText());
+
         while (true) {
             Message message = connection.receive();
             Thread.ofVirtual().start(new UDPRequestHandler(connection, message, handler));
