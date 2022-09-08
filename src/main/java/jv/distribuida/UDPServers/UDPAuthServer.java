@@ -24,10 +24,26 @@ public class UDPAuthServer {
         json.addProperty("service", "Auth");
         json.addProperty("address", "localhost");
         json.addProperty("port", 9004);
+        json.addProperty("heartbeat", 9104);
         json.addProperty("auth", false);
         connection.send(new Message(InetAddress.getLocalHost(), 9005, json.toString()));
         Message m = connection.receive();
         System.out.println(m.getText());
+
+        UDPConnection hbconnection = new UDPConnection(9104);
+        Thread.ofVirtual().start(() -> {
+            while (true) {
+                Message message = null;
+                try {
+                    message = hbconnection.receive();
+                    String heartbeat = "{\"heartbeat\":true}";
+                    message.setText(heartbeat);
+                    hbconnection.send(message);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        });
 
         while (true) {
             Message message = connection.receive();

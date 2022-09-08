@@ -30,8 +30,9 @@ public class GetClient {
         }
     }
 
-    public JsonObject get(int id, String token) {
+    public JsonObject get(String service, int id, String token) {
         JsonObject json = new JsonObject();
+        json.addProperty("target", service);
         json.addProperty("action", "GET");
         json.addProperty("token", token);
         json.addProperty("id", id);

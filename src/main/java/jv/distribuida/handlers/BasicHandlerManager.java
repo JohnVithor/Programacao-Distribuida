@@ -12,7 +12,6 @@ import java.util.HashMap;
 public abstract class BasicHandlerManager implements RequestHandler {
     private final static String missingAction = "{\"status\":\"Failure\",\"message\":\"The 'action' attribute was not found\"}";
     private final static String missingToken = "{\"status\":\"Failure\",\"message\":\"The 'token' attribute was not found\"}";
-    private final static String heartbeat = "{\"heartbeat\":true}";
 
     protected final HashMap<String, AuthActionHandler> handlers;
     protected final AuthActionHandler defaultHandler;
@@ -33,11 +32,6 @@ public abstract class BasicHandlerManager implements RequestHandler {
     public Message handle(Message message) {
         try {
             JsonObject json = JsonParser.parseString(message.getText()).getAsJsonObject();
-            JsonElement hbElem = json.get("heartbeat");
-            if (hbElem != null) {
-                message.setText(heartbeat);
-                return message;
-            }
             JsonElement actionElem = json.get("action");
             if (actionElem == null) {
                 message.setText(missingAction);

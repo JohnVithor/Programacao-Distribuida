@@ -1,6 +1,5 @@
 package jv.distribuida.UDPServers;
 
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import jv.distribuida.client.DatabaseClient;
 import jv.distribuida.network.Message;
@@ -24,10 +23,26 @@ public class UDPBoardServer {
         json.addProperty("service", "Board");
         json.addProperty("address", "localhost");
         json.addProperty("port", 9001);
+        json.addProperty("heartbeat", 9101);
         json.addProperty("auth", true);
         connection.send(new Message(InetAddress.getLocalHost(), 9005, json.toString()));
         Message m = connection.receive();
         System.out.println(m.getText());
+
+        UDPConnection hbconnection = new UDPConnection(9101);
+        Thread.ofVirtual().start(() -> {
+            while (true) {
+                Message message = null;
+                try {
+                    message = hbconnection.receive();
+                    String heartbeat = "{\"heartbeat\":true}";
+                    message.setText(heartbeat);
+                    hbconnection.send(message);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        });
 
         while (true) {
             Message message = connection.receive();

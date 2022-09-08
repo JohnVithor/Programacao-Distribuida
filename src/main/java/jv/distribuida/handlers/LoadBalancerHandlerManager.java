@@ -66,7 +66,10 @@ public class LoadBalancerHandlerManager implements RequestHandler {
             throw new IOException("Auth service not found");
         }
         ServiceInfo info = services.get("Auth");
-        JsonObject response = info.redirect(json);
+        JsonObject request = new JsonObject();
+        request.add("token", json.get("token"));
+        request.addProperty("action", "AUTHORIZE");
+        JsonObject response = info.redirect(request);
         if (response.get("status").getAsString().equals("Failure")) {
             throw new IOException(response.get("message").getAsString());
         }
@@ -83,13 +86,16 @@ public class LoadBalancerHandlerManager implements RequestHandler {
         JsonElement serviceElem = json.get("service");
         JsonElement addressElem = json.get("address");
         JsonElement portElem = json.get("port");
+        JsonElement hbElem = json.get("heartbeat");
         JsonElement authElem = json.get("auth");
         JsonObject response = new JsonObject();
-        if (serviceElem != null && addressElem != null && portElem != null && authElem != null) {
+        if (serviceElem != null && addressElem != null &&
+                portElem != null && authElem != null && hbElem != null) {
             String service = serviceElem.getAsString();
             System.out.println("Olá " + service);
             String address = addressElem.getAsString();
             int port = portElem.getAsInt();
+            int heartbeat = hbElem.getAsInt();
             boolean auth = authElem.getAsBoolean();
             if (!services.containsKey(service)) {
                 services.put(service, new ServiceInfo(auth, new ArrayList<>()));
@@ -98,7 +104,8 @@ public class LoadBalancerHandlerManager implements RequestHandler {
             if (serviceInfo.isRequiresAuth() != auth) {
                 throw new IOException("Service auth requirement not compatible");
             }
-            ServiceInstance instance = new ServiceInstance(InetAddress.getByName(address), port, type);
+            ServiceInstance instance = new ServiceInstance(InetAddress.getByName(address),
+                    port, heartbeat,type);
             if (!serviceInfo.contains(instance)){
                 serviceInfo.add(instance);
                 response.addProperty("status", "Success");
@@ -126,7 +133,7 @@ public class LoadBalancerHandlerManager implements RequestHandler {
             if (info.isRequiresAuth()) {
                 authorize(json);
             }
-            return info.redirect(json).getAsString();
+            return info.redirect(json).toString();
         } else {
             return targetNotFound.replace("$$$", target);
         }

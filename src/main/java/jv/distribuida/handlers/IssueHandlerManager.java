@@ -28,7 +28,7 @@ public class IssueHandlerManager extends BasicDBHandlerManager {
         if (idBoardElem != null && nameElem != null && descElem != null) {
             JsonObject request = new JsonObject();
             int idBoard = idBoardElem.getAsInt();
-            JsonObject board = getClient.get(idBoard, token);
+            JsonObject board = getClient.get("Board", idBoard, token);
             if (board.get("status").getAsString().equals("Failure")) {
                 response = new JsonObject();
                 response.addProperty("status", "Failure");
@@ -120,7 +120,7 @@ public class IssueHandlerManager extends BasicDBHandlerManager {
                     return response.toString();
                 }
                 int to = toElem.getAsInt();
-                JsonObject board = getClient.get(to, getUser(token));
+                JsonObject board = getClient.get("Board", to, getUser(token));
                 if (board.get("status").getAsString().equals("Failure")) {
                     response = new JsonObject();
                     response.addProperty("status", "Failure");

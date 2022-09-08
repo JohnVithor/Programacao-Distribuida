@@ -16,42 +16,43 @@ import java.net.InetAddress;
 public class ServiceInstance implements Serializable {
     private final InetAddress address;
     private final int port;
+    private final int heartbeatPort;
     private final Connection connection;
+    private final Connection hbconnection;
 
     private final static String heartbeat = "{\"heartbeat\":\"Ok?\"}";
 
-    public ServiceInstance(InetAddress address, int port, ConnectionType type) throws IOException {
+    public ServiceInstance(InetAddress address, int port, int heartbeatPort, ConnectionType type) throws IOException {
         this.address = address;
         this.port = port;
+        this.heartbeatPort = heartbeatPort;
         this.connection = ConnectionCreator.createConnection(type, address, port);
+        this.hbconnection = ConnectionCreator.createConnection(type, address, port);
     }
 
-    public JsonObject redirect(JsonObject json) throws IOException {
-        synchronized (connection) {
-            connection.send(new Message(address, port, json.getAsString()));
-            try {
-                return JsonParser.parseString(connection.receive().getText()).getAsJsonObject();
-            } catch (JsonSyntaxException | IllegalStateException | IOException e) {
-                return exceptionHandler(e.getMessage());
-            }
+    public synchronized JsonObject redirect(JsonObject json) throws IOException {
+        connection.send(new Message(address, port, json.toString()));
+        try {
+            return JsonParser.parseString(connection.receive().getText()).getAsJsonObject();
+        } catch (JsonSyntaxException | IllegalStateException | IOException e) {
+            System.out.println("oi");
+            return exceptionHandler(e.getMessage());
         }
     }
 
     public boolean heartbeat() {
-        synchronized (connection) {
-            try {
-                connection.send(new Message(address, port, heartbeat));
-                JsonObject response = JsonParser.parseString(connection.receive().getText()).getAsJsonObject();
-                JsonElement heartElem = response.get("heartbeat");
-                if (heartElem != null) {
-                    return heartElem.getAsBoolean();
-                } else {
-                    return false;
-                }
-            } catch (JsonSyntaxException | IllegalStateException | IOException e) {
-                e.printStackTrace();
+        try {
+            hbconnection.send(new Message(address, heartbeatPort, heartbeat));
+            JsonObject response = JsonParser.parseString(hbconnection.receive().getText()).getAsJsonObject();
+            JsonElement heartElem = response.get("heartbeat");
+            if (heartElem != null) {
+                return heartElem.getAsBoolean();
+            } else {
                 return false;
             }
+        } catch (JsonSyntaxException | IllegalStateException | IOException e) {
+            e.printStackTrace();
+            return false;
         }
     }
 

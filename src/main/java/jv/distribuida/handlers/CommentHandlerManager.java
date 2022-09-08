@@ -24,7 +24,7 @@ public class CommentHandlerManager extends BasicDBHandlerManager {
         JsonObject response;
         if (idIssueElem != null && contentElem != null) {
             int idIssue = idIssueElem.getAsInt();
-            JsonObject issue = getClient.get(idIssue, token);
+            JsonObject issue = getClient.get("Issue", idIssue, token);
             if (issue.get("status").getAsString().equals("Failure")) {
                 response = new JsonObject();
                 response.addProperty("status", "Failure");

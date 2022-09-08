@@ -18,7 +18,7 @@ public class UDPCommentServer {
         DatabaseClient databaseClient = new DatabaseClient(InetAddress.getLocalHost(), 9000, dbconnection);
 
         UDPConnection issueConnection = new UDPConnection();
-        GetClient getClient = new GetClient(InetAddress.getLocalHost(), 9002, issueConnection);
+        GetClient getClient = new GetClient(InetAddress.getLocalHost(), 9005, issueConnection);
 
         RequestHandler handler = new CommentHandlerManager(databaseClient, getClient);
         UDPConnection connection = new UDPConnection(9003);
@@ -28,10 +28,26 @@ public class UDPCommentServer {
         json.addProperty("service", "Comment");
         json.addProperty("address", "localhost");
         json.addProperty("port", 9003);
+        json.addProperty("heartbeat", 9103);
         json.addProperty("auth", true);
         connection.send(new Message(InetAddress.getLocalHost(), 9005, json.toString()));
         Message m = connection.receive();
         System.out.println(m.getText());
+
+        UDPConnection hbconnection = new UDPConnection(9103);
+        Thread.ofVirtual().start(() -> {
+            while (true) {
+                Message message = null;
+                try {
+                    message = hbconnection.receive();
+                    String heartbeat = "{\"heartbeat\":true}";
+                    message.setText(heartbeat);
+                    hbconnection.send(message);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        });
 
         while (true) {
             Message message = connection.receive();
