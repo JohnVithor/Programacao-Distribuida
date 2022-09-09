@@ -28,8 +28,14 @@ public class BoardHandlerManager extends BasicDBHandlerManager {
             request.addProperty("name", name);
             request.addProperty("description", description);
             request.addProperty("user", getUser(token));
-            response = databaseClient.save(request, collection, "board").getAsJsonObject();
-            response.addProperty("status", "Success");
+            try {
+                response = databaseClient.save(request, collection, "board").getAsJsonObject();
+                response.addProperty("status", "Success");
+            } catch (RuntimeException e) {
+                response = new JsonObject();
+                response.addProperty("status", "Failure");
+                response.addProperty("message", e.getMessage());
+            }
         } else {
             response = new JsonObject();
             response.addProperty("status", "Failure");
@@ -52,8 +58,8 @@ public class BoardHandlerManager extends BasicDBHandlerManager {
         }
         JsonElement nameElem = json.get("name");
         JsonElement descElem = json.get("description");
+        JsonObject response = new JsonObject();
         if (nameElem == null && descElem == null) {
-            JsonObject response = new JsonObject();
             response.addProperty("status", "Failure");
             response.addProperty("message", "At least one of the listed fields are needed");
             JsonArray fields = new JsonArray();
@@ -72,8 +78,14 @@ public class BoardHandlerManager extends BasicDBHandlerManager {
                 String description = descElem.getAsString();
                 request.addProperty("description", description);
             }
-            JsonObject response = databaseClient.update(request, collection, token).getAsJsonObject();
-            response.addProperty("status", "Success");
+            try {
+                response = databaseClient.update(request, collection, token).getAsJsonObject();
+                response.addProperty("status", "Success");
+            } catch (RuntimeException e) {
+                response = new JsonObject();
+                response.addProperty("status", "Failure");
+                response.addProperty("message", e.getMessage());
+            }
             return response.toString();
         }
     }

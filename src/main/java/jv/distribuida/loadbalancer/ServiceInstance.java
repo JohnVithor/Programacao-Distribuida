@@ -12,6 +12,7 @@ import java.net.InetAddress;
 
 public class ServiceInstance implements Serializable {
     private final static String heartbeat = "{\"heartbeat\":\"Ok?\"}";
+    private final static String heartbeatR = "{\"heartbeat\":true}";
     private final InetAddress address;
     private final int port;
     private final int heartbeatPort;
@@ -23,17 +24,18 @@ public class ServiceInstance implements Serializable {
         this.port = port;
         this.heartbeatPort = heartbeatPort;
         this.connection = ConnectionCreator.createConnection(type, address, port);
+        this.connection.setTimeout(1000);
         this.hbconnection = ConnectionCreator.createConnection(type, address, port);
+        this.hbconnection.setTimeout(1000);
     }
 
-    public static void startHeartBeat(UDPConnection hbconnection) {
+    public static void startHeartBeat(final UDPConnection hbconnection) {
         Thread.ofVirtual().start(() -> {
             while (true) {
                 Message message = null;
                 try {
                     message = hbconnection.receive();
-                    String heartbeat = "{\"heartbeat\":true}";
-                    message.setText(heartbeat);
+                    message.setText(heartbeatR);
                     hbconnection.send(message);
                 } catch (IOException e) {
                     throw new RuntimeException(e);
@@ -42,12 +44,11 @@ public class ServiceInstance implements Serializable {
         });
     }
 
-    public synchronized JsonObject redirect(JsonObject json) throws IOException {
+    public JsonObject redirect(JsonObject json) throws IOException {
         connection.send(new Message(address, port, json.toString()));
         try {
             return JsonParser.parseString(connection.receive().getText()).getAsJsonObject();
         } catch (JsonSyntaxException | IllegalStateException | IOException e) {
-            System.out.println("oi");
             return exceptionHandler(e.getMessage());
         }
     }

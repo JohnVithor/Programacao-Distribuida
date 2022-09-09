@@ -4,16 +4,12 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import jv.distribuida.client.DatabaseClient;
-import jv.distribuida.client.GetClient;
 
 import java.util.HashMap;
 
 public class IssueHandlerManager extends BasicDBHandlerManager {
-    private final GetClient getClient;
-
-    public IssueHandlerManager(DatabaseClient databaseClient, GetClient getClient) {
+    public IssueHandlerManager(DatabaseClient databaseClient) {
         super(new HashMap<>(), databaseClient, "Issue");
-        this.getClient = getClient;
         handlers.put("CREATE", this::createHandler);
         handlers.put("UPDATE", this::updateHandler);
         handlers.put("MOVE", this::moveHandler);
@@ -24,28 +20,24 @@ public class IssueHandlerManager extends BasicDBHandlerManager {
         JsonElement idBoardElem = json.get("idBoard");
         JsonElement nameElem = json.get("name");
         JsonElement descElem = json.get("description");
-        JsonObject response;
+        JsonObject response = new JsonObject();
         if (idBoardElem != null && nameElem != null && descElem != null) {
             JsonObject request = new JsonObject();
             int idBoard = idBoardElem.getAsInt();
-            JsonObject board = getClient.get("Board", idBoard, token);
-            if (board.get("status").getAsString().equals("Failure")) {
-                response = new JsonObject();
-                response.addProperty("status", "Failure");
-                response.addProperty("message", "The board of id: "
-                        + idBoard + "does not exist");
-            } else {
-                String name = nameElem.getAsString();
-                String description = descElem.getAsString();
-                request.addProperty("idBoard", idBoard);
-                request.addProperty("name", name);
-                request.addProperty("description", description);
-                request.addProperty("user", getUser(token));
+            String name = nameElem.getAsString();
+            String description = descElem.getAsString();
+            request.addProperty("idBoard", idBoard);
+            request.addProperty("name", name);
+            request.addProperty("description", description);
+            request.addProperty("user", getUser(token));
+            try {
                 response = databaseClient.save(request, collection, "issue").getAsJsonObject();
                 response.addProperty("status", "Success");
+            } catch (RuntimeException e) {
+                response.addProperty("status", "Failure");
+                response.addProperty("message", e.getMessage());
             }
         } else {
-            response = new JsonObject();
             response.addProperty("status", "Failure");
             response.addProperty("message", "All the listed fields are needed");
             JsonArray fields = new JsonArray();
@@ -94,59 +86,46 @@ public class IssueHandlerManager extends BasicDBHandlerManager {
                 String description = descElem.getAsString();
                 request.addProperty("description", description);
             }
-            JsonObject response = databaseClient.update(request, collection, token).getAsJsonObject();
-            response.addProperty("status", "Success");
-            return response.toString();
+            try {
+                JsonObject response = databaseClient.update(request, collection, token).getAsJsonObject();
+                response.addProperty("status", "Success");
+                return response.toString();
+            } catch (RuntimeException e) {
+                JsonObject response = new JsonObject();
+                response.addProperty("status", "Failure");
+                response.addProperty("message", e.getMessage());
+                return response.toString();
+            }
         }
     }
 
     public String moveHandler(JsonObject json, String token) {
-        JsonObject response;
-        JsonElement fromElem = json.get("from");
-        JsonElement toElem = json.get("to");
+        JsonObject response = new JsonObject();
+        JsonElement idBoardElem = json.get("idBoard");
         JsonElement idElem = json.get("id");
-        if (idElem != null && fromElem != null && toElem != null) {
+        if (idElem != null && idBoardElem != null) {
             JsonObject request = new JsonObject();
             int id = idElem.getAsInt();
+            int idBoard = idBoardElem.getAsInt();
+            JsonObject board = new JsonObject();
+            board.addProperty("status", "oko");
+            request.addProperty("id", id);
+            request.addProperty("idBoard", idBoard);
             try {
-                JsonObject issue = databaseClient.get(id, collection, token).getAsJsonObject();
-                int from = fromElem.getAsInt();
-                int currentBoard = issue.get("idBoard").getAsInt();
-                if (currentBoard != from) {
-                    response = new JsonObject();
-                    response.addProperty("status", "Failure");
-                    response.addProperty("message", "The issue of id: "
-                            + id + "does not is on board of id: " + from + " is on board of id: " + currentBoard);
-                    return response.toString();
-                }
-                int to = toElem.getAsInt();
-                JsonObject board = getClient.get("Board", to, getUser(token));
-                if (board.get("status").getAsString().equals("Failure")) {
-                    response = new JsonObject();
-                    response.addProperty("status", "Failure");
-                    response.addProperty("message", "The board of id: "
-                            + to + "does not exist");
-                } else {
-                    request.addProperty("id", id);
-                    request.addProperty("idBoard", to);
-                    response = databaseClient.update(request, collection, token).getAsJsonObject();
-                    response.addProperty("status", "Success");
-                }
+                response = databaseClient.update(request, collection, token).getAsJsonObject();
+                response.addProperty("status", "Success");
+                return response.toString();
             } catch (RuntimeException e) {
-                JsonObject responseEx = new JsonObject();
-                responseEx.addProperty("status", "Failure");
-                responseEx.addProperty("message", "The Issue of id: "
-                        + id + "does not exist");
-                return responseEx.toString();
+                response.addProperty("status", "Failure");
+                response.addProperty("message", e.getMessage());
+                return response.toString();
             }
         } else {
-            response = new JsonObject();
             response.addProperty("status", "Failure");
             response.addProperty("message", "All the listed fields are needed");
             JsonArray fields = new JsonArray();
             fields.add("id (valid)");
-            fields.add("from (valid board id)");
-            fields.add("to (valid board id)");
+            fields.add("idBoard (valid board id)");
             response.add("fields", fields);
         }
         return response.toString();
@@ -160,9 +139,15 @@ public class IssueHandlerManager extends BasicDBHandlerManager {
         if (idBoardElem != null && pageElem != null && limitElem != null) {
             long page = pageElem.getAsLong();
             long limit = limitElem.getAsLong();
-            response.add("data", databaseClient.find("idBoard",
-                    idBoardElem, page, limit, collection, token));
-            response.addProperty("status", "Success");
+            try {
+                response.add("data", databaseClient.find("idBoard",
+                        idBoardElem, page, limit, collection, token));
+                response.addProperty("status", "Success");
+            } catch (RuntimeException e) {
+                response.addProperty("status", "Failure");
+                response.addProperty("message", e.getMessage());
+                return response.toString();
+            }
         } else {
             response.addProperty("status", "Failure");
             response.addProperty("message", "All the listed fields are needed");

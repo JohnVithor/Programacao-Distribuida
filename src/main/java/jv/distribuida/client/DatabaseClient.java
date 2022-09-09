@@ -24,6 +24,7 @@ public class DatabaseClient {
     JsonElement handleResponse(JsonObject request) {
         try {
             connection.send(new Message(address, port, request.toString()));
+            connection.setTimeout(100);
             Message message = connection.receive();
             JsonObject response = JsonParser.parseString(message.getText()).getAsJsonObject();
             if (response.get("status").getAsString().equals("Success")) {

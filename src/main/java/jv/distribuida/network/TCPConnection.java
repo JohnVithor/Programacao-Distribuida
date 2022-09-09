@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.net.SocketException;
 
 public class TCPConnection implements Connection {
     private final Socket socket;
@@ -28,5 +29,10 @@ public class TCPConnection implements Connection {
 
     public void close() throws IOException {
         socket.close();
+    }
+
+    @Override
+    public void setTimeout(int milli) throws SocketException {
+        socket.setSoTimeout(milli);
     }
 }

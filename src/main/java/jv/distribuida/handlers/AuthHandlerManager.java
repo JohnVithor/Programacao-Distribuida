@@ -33,12 +33,6 @@ public class AuthHandlerManager implements RequestHandler {
         this.handlers = new HashMap<>();
         handlers.put("LOGIN", this::loginHandler);
         handlers.put("AUTHORIZE", this::authorizeHandler);
-
-        JsonObject request = new JsonObject();
-        request.addProperty("username", "jv");
-        request.addProperty("password", "123");
-        JsonObject response = databaseClient.save(request, collection, "auth").getAsJsonObject();
-
     }
 
     @Override

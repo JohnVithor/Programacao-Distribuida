@@ -24,8 +24,14 @@ public abstract class BasicDBHandlerManager extends BasicHandlerManager {
         JsonElement idElem = json.get("id");
         JsonObject response;
         if (idElem != null) {
-            response = databaseClient.get(idElem.getAsInt(), collection, token).getAsJsonObject();
-            response.addProperty("status", "Success");
+            try {
+                response = databaseClient.get(idElem.getAsInt(), collection, token).getAsJsonObject();
+                response.addProperty("status", "Success");
+            } catch (RuntimeException e) {
+                response = new JsonObject();
+                response.addProperty("status", "Failure");
+                response.addProperty("message", e.getMessage());
+            }
         } else {
             response = new JsonObject();
             response.addProperty("status", "Failure");
@@ -47,8 +53,14 @@ public abstract class BasicDBHandlerManager extends BasicHandlerManager {
             String field = fieldElem.getAsString();
             long page = pageElem.getAsLong();
             long limit = limitElem.getAsLong();
-            response.add("data", databaseClient.find(field, valueElem, page, limit, collection, token));
-            response.addProperty("status", "Success");
+            try {
+                response.add("data", databaseClient.find(field, valueElem, page, limit, collection, token));
+                response.addProperty("status", "Success");
+            } catch (RuntimeException e) {
+                response = new JsonObject();
+                response.addProperty("status", "Failure");
+                response.addProperty("message", e.getMessage());
+            }
         } else {
             response.addProperty("status", "Failure");
             response.addProperty("message", "All the listed fields are needed");

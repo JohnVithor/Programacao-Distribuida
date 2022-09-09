@@ -26,8 +26,13 @@ public class DatabaseHandlerManager extends BasicHandlerManager {
         if (collectionElem != null && dataElem != null) {
             String collection = collectionElem.getAsString();
             JsonObject data = dataElem.getAsJsonObject();
-            response.add("data", database.save(data, collection));
-            response.addProperty("status", "Success");
+            try {
+                response.add("data", database.save(data, collection));
+                response.addProperty("status", "Success");
+            } catch (RuntimeException e) {
+                response.addProperty("status", "Failure");
+                response.addProperty("message", e.getMessage());
+            }
         } else {
             response.addProperty("status", "Failure");
             response.addProperty("message", "All the listed fields are needed");
@@ -46,9 +51,14 @@ public class DatabaseHandlerManager extends BasicHandlerManager {
         if (collectionElem != null && idElem != null) {
             String collection = collectionElem.getAsString();
             int id = idElem.getAsInt();
-            JsonObject data = database.get(id, collection);
-            response.addProperty("status", "Success");
-            response.add("data", data);
+            try {
+                JsonObject data = database.get(id, collection);
+                response.addProperty("status", "Success");
+                response.add("data", data);
+            } catch (RuntimeException e) {
+                response.addProperty("status", "Failure");
+                response.addProperty("message", e.getMessage());
+            }
         } else {
             response.addProperty("status", "Failure");
             response.addProperty("message", "All the listed fields are needed");
@@ -67,8 +77,13 @@ public class DatabaseHandlerManager extends BasicHandlerManager {
         if (collectionElem != null && dataElem != null) {
             String collection = collectionElem.getAsString();
             JsonObject data = dataElem.getAsJsonObject();
-            response.add("data", database.update(data, collection));
-            response.addProperty("status", "Success");
+            try {
+                response.add("data", database.update(data, collection));
+                response.addProperty("status", "Success");
+            } catch (RuntimeException e) {
+                response.addProperty("status", "Failure");
+                response.addProperty("message", e.getMessage());
+            }
         } else {
             response.addProperty("status", "Failure");
             response.addProperty("message", "All the listed fields are needed");
@@ -92,8 +107,13 @@ public class DatabaseHandlerManager extends BasicHandlerManager {
             String field = fieldElem.getAsString();
             long page = pageElem.getAsLong();
             long limit = limitElem.getAsLong();
-            response.add("data", database.find(field, value, page, limit, collection));
-            response.addProperty("status", "Success");
+            try {
+                response.add("data", database.find(field, value, page, limit, collection));
+                response.addProperty("status", "Success");
+            } catch (RuntimeException e) {
+                response.addProperty("status", "Failure");
+                response.addProperty("message", e.getMessage());
+            }
         } else {
             response.addProperty("status", "Failure");
             response.addProperty("message", "All the listed fields are needed");

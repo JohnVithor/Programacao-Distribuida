@@ -34,4 +34,9 @@ public class UDPConnection implements Connection {
     public void close() {
         socket.close();
     }
+
+    @Override
+    public void setTimeout(int milli) throws SocketException {
+        this.socket.setSoTimeout(milli);
+    }
 }

@@ -2,7 +2,6 @@ package jv.distribuida.UDPServers;
 
 import com.google.gson.JsonObject;
 import jv.distribuida.client.DatabaseClient;
-import jv.distribuida.client.GetClient;
 import jv.distribuida.handlers.CommentHandlerManager;
 import jv.distribuida.network.Message;
 import jv.distribuida.network.RequestHandler;
@@ -16,26 +15,29 @@ import static jv.distribuida.loadbalancer.ServiceInstance.startHeartBeat;
 
 public class UDPCommentServer {
     public static void main(String[] args) throws IOException {
-        UDPConnection dbconnection = new UDPConnection();
-        DatabaseClient databaseClient = new DatabaseClient(InetAddress.getLocalHost(), 9000, dbconnection);
+        int port = Integer.parseInt(args[0]);
+        int hbport = Integer.parseInt(args[1]);
+        int dbport = Integer.parseInt(args[2]);
+        int lbport = Integer.parseInt(args[3]);
 
-        UDPConnection issueConnection = new UDPConnection();
-        GetClient getClient = new GetClient(InetAddress.getLocalHost(), 9005, issueConnection);
+        UDPConnection dbConnection = new UDPConnection();
+        dbConnection.setTimeout(1000);
+        DatabaseClient databaseClient = new DatabaseClient(InetAddress.getLocalHost(), dbport, dbConnection);
 
-        RequestHandler handler = new CommentHandlerManager(databaseClient, getClient);
-        UDPConnection connection = new UDPConnection(9003);
+        RequestHandler handler = new CommentHandlerManager(databaseClient);
+        UDPConnection connection = new UDPConnection(port);
 
-        UDPConnection hbconnection = new UDPConnection(9103);
+        UDPConnection hbconnection = new UDPConnection(hbport);
         startHeartBeat(hbconnection);
 
         JsonObject json = new JsonObject();
         json.addProperty("target", "LoadBalancer");
         json.addProperty("service", "Comment");
         json.addProperty("address", "localhost");
-        json.addProperty("port", 9003);
-        json.addProperty("heartbeat", 9103);
+        json.addProperty("port", port);
+        json.addProperty("heartbeat", hbport);
         json.addProperty("auth", true);
-        connection.send(new Message(InetAddress.getLocalHost(), 9005, json.toString()));
+        connection.send(new Message(InetAddress.getLocalHost(), lbport, json.toString()));
         Message m = connection.receive();
         System.out.println(m.getText());
 

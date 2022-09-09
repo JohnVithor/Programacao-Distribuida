@@ -8,7 +8,7 @@ import java.io.IOException;
 public class UDPLoadBalancerServer {
     public static void main(String[] args) throws IOException {
         RequestHandler handler = new LoadBalancerHandlerManager(ConnectionType.UDP);
-        UDPConnection connection = new UDPConnection(9005);
+        UDPConnection connection = new UDPConnection(Integer.parseInt(args[0]));
         while (true) {
             Message message = connection.receive();
             Thread.ofVirtual().start(new UDPRequestHandler(connection, message, handler));

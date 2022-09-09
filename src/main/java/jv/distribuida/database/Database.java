@@ -28,14 +28,14 @@ public class Database {
 
     public JsonObject save(JsonObject data, String collection) {
         check_collection(collection);
-        synchronized (locks.get(collection)) {
+//        synchronized (locks.get(collection)) {
             String time = LocalDateTime.now().format(formatter);
             data.addProperty("id", this.data.get(collection).size());
             data.addProperty("creation", time);
             data.addProperty("modification", time);
             this.data.get(collection).add(data);
             return data.deepCopy();
-        }
+//        }
     }
 
     public JsonObject get(int id, String collection) {
@@ -43,9 +43,9 @@ public class Database {
         ArrayList<JsonObject> col = this.data.get(collection);
         if (col.size() > id) {
             JsonObject r;
-            synchronized (col.get(id)) {
+//            synchronized (col.get(id)) {
                 r = this.data.get(collection).get(id).deepCopy();
-            }
+//            }
             return r;
         }
         throw new RuntimeException("ID: " + id + " not found on collection: " + collection);
@@ -75,7 +75,7 @@ public class Database {
         check_collection(collection);
         ArrayList<JsonObject> col = this.data.get(collection);
         if (col.size() > id) {
-            synchronized (col.get(id)) {
+//            synchronized (col.get(id)) {
                 JsonObject old_data = col.get(id);
                 old_data.remove("modification");
                 String time = LocalDateTime.now().format(formatter);
@@ -88,7 +88,7 @@ public class Database {
                 }
                 col.set(id, old_data);
                 return old_data.deepCopy();
-            }
+//            }
         }
         throw new RuntimeException("ID: " + id + " not found on collection: " + collection);
     }

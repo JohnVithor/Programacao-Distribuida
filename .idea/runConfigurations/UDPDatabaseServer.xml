@@ -1,16 +1,11 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="UDPDatabaseServer" type="Application" factoryName="Application">
+  <configuration default="false" name="UDPDatabaseServer" type="Application" factoryName="Application" singleton="false">
     <option name="ALTERNATIVE_JRE_PATH" value="$USER_HOME$/software/openjdk-19-loom+6-625_linux-x64_bin/jdk-19" />
     <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="true" />
     <option name="MAIN_CLASS_NAME" value="jv.distribuida.UDPServers.UDPDatabaseServer" />
     <module name="BoardService" />
+    <option name="PROGRAM_PARAMETERS" value="9001" />
     <option name="VM_PARAMETERS" value="--enable-preview" />
-    <extension name="coverage">
-      <pattern>
-        <option name="PATTERN" value="UDPServers.*" />
-        <option name="ENABLED" value="true" />
-      </pattern>
-    </extension>
     <method v="2">
       <option name="Make" enabled="true" />
     </method>

@@ -1,0 +1,21 @@
+connection_type: UDP
+load_balancer:
+  port: 9000
+database:
+  port: 9001
+auth:
+  instances: 1
+  port: [ 9002 ]
+  heartbeat: [ 9102 ]
+board:
+  instances: 1
+  port: [ 9003 ]
+  heartbeat: [ 9103 ]
+issue:
+  instances: 1
+  port: [ 9004 ]
+  heartbeat: [ 9104 ]
+comment:
+  instances: 1
+  port: [ 9005 ]
+  heartbeat: [ 9105 ]

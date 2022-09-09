@@ -15,22 +15,28 @@ import static jv.distribuida.loadbalancer.ServiceInstance.startHeartBeat;
 
 public class UDPAuthServer {
     public static void main(String[] args) throws IOException {
-        UDPConnection dbconnection = new UDPConnection();
-        DatabaseClient databaseClient = new DatabaseClient(InetAddress.getLocalHost(), 9000, dbconnection);
-        RequestHandler handler = new AuthHandlerManager(databaseClient);
-        UDPConnection connection = new UDPConnection(9004);
+        int port = Integer.parseInt(args[0]);
+        int hbport = Integer.parseInt(args[1]);
+        int dbport = Integer.parseInt(args[2]);
+        int lbport = Integer.parseInt(args[3]);
 
-        UDPConnection hbconnection = new UDPConnection(9104);
+        UDPConnection dbConnection = new UDPConnection();
+        dbConnection.setTimeout(1000);
+        DatabaseClient databaseClient = new DatabaseClient(InetAddress.getLocalHost(), dbport, dbConnection);
+        RequestHandler handler = new AuthHandlerManager(databaseClient);
+        UDPConnection connection = new UDPConnection(port);
+
+        UDPConnection hbconnection = new UDPConnection(hbport);
         startHeartBeat(hbconnection);
 
         JsonObject json = new JsonObject();
         json.addProperty("target", "LoadBalancer");
         json.addProperty("service", "Auth");
         json.addProperty("address", "localhost");
-        json.addProperty("port", 9004);
-        json.addProperty("heartbeat", 9104);
+        json.addProperty("port", port);
+        json.addProperty("heartbeat", hbport);
         json.addProperty("auth", false);
-        connection.send(new Message(InetAddress.getLocalHost(), 9005, json.toString()));
+        connection.send(new Message(InetAddress.getLocalHost(), lbport, json.toString()));
         Message m = connection.receive();
         System.out.println(m.getText());
 

@@ -25,29 +25,29 @@ public class ServiceInfo implements Serializable {
 
     public JsonObject redirect(JsonObject json) throws IOException {
         ServiceInstance instance;
-        synchronized (instances) {
+//        synchronized (instances) {
             next.set(next.get() % instances.size());
             instance = instances.get(next.getAndIncrement());
-        }
+//        }
         return instance.redirect(json);
     }
 
     public void add(ServiceInstance instance) {
-        synchronized (instances) {
+//        synchronized (instances) {
             this.instances.add(instance);
-        }
+//        }
     }
 
     public boolean contains(ServiceInstance instance) {
-        synchronized (instances) {
+//        synchronized (instances) {
             return this.instances.contains(instance);
-        }
+//        }
     }
 
     public boolean heartbeat() {
-        synchronized (instances) {
+//        synchronized (instances) {
             instances.removeIf(instance -> !instance.heartbeat());
             return !instances.isEmpty();
-        }
+//        }
     }
 }
