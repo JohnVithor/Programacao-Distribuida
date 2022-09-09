@@ -80,7 +80,7 @@ public class Database {
                 old_data.remove("modification");
                 String time = LocalDateTime.now().format(formatter);
                 old_data.addProperty("modification", time);
-                for (String field :new_data.keySet()) {
+                for (String field : new_data.keySet()) {
                     if (old_data.has(field)) {
                         old_data.remove(field);
                     }

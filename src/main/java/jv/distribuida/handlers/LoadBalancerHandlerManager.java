@@ -51,7 +51,7 @@ public class LoadBalancerHandlerManager implements RequestHandler {
     }
 
     void heartbeat() {
-        for (String key: services.keySet().stream().toList()) {
+        for (String key : services.keySet().stream().toList()) {
             if (!services.get(key).heartbeat()) {
                 System.out.println(key + " removed!");
                 services.remove(key);
@@ -105,8 +105,8 @@ public class LoadBalancerHandlerManager implements RequestHandler {
                 throw new IOException("Service auth requirement not compatible");
             }
             ServiceInstance instance = new ServiceInstance(InetAddress.getByName(address),
-                    port, heartbeat,type);
-            if (!serviceInfo.contains(instance)){
+                    port, heartbeat, type);
+            if (!serviceInfo.contains(instance)) {
                 serviceInfo.add(instance);
                 response.addProperty("status", "Success");
                 response.addProperty("message", "Service added to known services");
@@ -121,6 +121,7 @@ public class LoadBalancerHandlerManager implements RequestHandler {
             fields.add("service");
             fields.add("address");
             fields.add("port");
+            fields.add("heartbeat");
             fields.add("auth");
             response.add("fields", fields);
         }

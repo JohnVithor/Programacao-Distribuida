@@ -3,7 +3,6 @@ package jv.distribuida.UDPServers;
 import com.google.gson.JsonObject;
 import jv.distribuida.client.DatabaseClient;
 import jv.distribuida.handlers.AuthHandlerManager;
-import jv.distribuida.handlers.BoardHandlerManager;
 import jv.distribuida.network.Message;
 import jv.distribuida.network.RequestHandler;
 import jv.distribuida.network.UDPConnection;
@@ -12,12 +11,17 @@ import jv.distribuida.network.UDPRequestHandler;
 import java.io.IOException;
 import java.net.InetAddress;
 
+import static jv.distribuida.loadbalancer.ServiceInstance.startHeartBeat;
+
 public class UDPAuthServer {
     public static void main(String[] args) throws IOException {
         UDPConnection dbconnection = new UDPConnection();
         DatabaseClient databaseClient = new DatabaseClient(InetAddress.getLocalHost(), 9000, dbconnection);
         RequestHandler handler = new AuthHandlerManager(databaseClient);
         UDPConnection connection = new UDPConnection(9004);
+
+        UDPConnection hbconnection = new UDPConnection(9104);
+        startHeartBeat(hbconnection);
 
         JsonObject json = new JsonObject();
         json.addProperty("target", "LoadBalancer");
@@ -30,24 +34,11 @@ public class UDPAuthServer {
         Message m = connection.receive();
         System.out.println(m.getText());
 
-        UDPConnection hbconnection = new UDPConnection(9104);
-        Thread.ofVirtual().start(() -> {
-            while (true) {
-                Message message = null;
-                try {
-                    message = hbconnection.receive();
-                    String heartbeat = "{\"heartbeat\":true}";
-                    message.setText(heartbeat);
-                    hbconnection.send(message);
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-            }
-        });
-
         while (true) {
             Message message = connection.receive();
             Thread.ofVirtual().start(new UDPRequestHandler(connection, message, handler));
         }
     }
+
+
 }

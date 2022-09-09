@@ -31,6 +31,7 @@ public class ServiceInfo implements Serializable {
         }
         return instance.redirect(json);
     }
+
     public void add(ServiceInstance instance) {
         synchronized (instances) {
             this.instances.add(instance);

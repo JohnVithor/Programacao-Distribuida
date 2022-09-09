@@ -3,8 +3,8 @@ package jv.distribuida.handlers;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import jv.distribuida.client.GetClient;
 import jv.distribuida.client.DatabaseClient;
+import jv.distribuida.client.GetClient;
 
 import java.util.HashMap;
 
@@ -94,7 +94,7 @@ public class IssueHandlerManager extends BasicDBHandlerManager {
                 String description = descElem.getAsString();
                 request.addProperty("description", description);
             }
-            JsonObject response = databaseClient.update(request, collection,token).getAsJsonObject();
+            JsonObject response = databaseClient.update(request, collection, token).getAsJsonObject();
             response.addProperty("status", "Success");
             return response.toString();
         }

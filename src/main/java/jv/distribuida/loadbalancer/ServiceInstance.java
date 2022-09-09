@@ -4,23 +4,19 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonSyntaxException;
-import jv.distribuida.network.Connection;
-import jv.distribuida.network.ConnectionCreator;
-import jv.distribuida.network.ConnectionType;
-import jv.distribuida.network.Message;
+import jv.distribuida.network.*;
 
 import java.io.IOException;
 import java.io.Serializable;
 import java.net.InetAddress;
 
 public class ServiceInstance implements Serializable {
+    private final static String heartbeat = "{\"heartbeat\":\"Ok?\"}";
     private final InetAddress address;
     private final int port;
     private final int heartbeatPort;
     private final Connection connection;
     private final Connection hbconnection;
-
-    private final static String heartbeat = "{\"heartbeat\":\"Ok?\"}";
 
     public ServiceInstance(InetAddress address, int port, int heartbeatPort, ConnectionType type) throws IOException {
         this.address = address;
@@ -28,6 +24,22 @@ public class ServiceInstance implements Serializable {
         this.heartbeatPort = heartbeatPort;
         this.connection = ConnectionCreator.createConnection(type, address, port);
         this.hbconnection = ConnectionCreator.createConnection(type, address, port);
+    }
+
+    public static void startHeartBeat(UDPConnection hbconnection) {
+        Thread.ofVirtual().start(() -> {
+            while (true) {
+                Message message = null;
+                try {
+                    message = hbconnection.receive();
+                    String heartbeat = "{\"heartbeat\":true}";
+                    message.setText(heartbeat);
+                    hbconnection.send(message);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        });
     }
 
     public synchronized JsonObject redirect(JsonObject json) throws IOException {

@@ -13,10 +13,10 @@ public class AuthHandlerManager implements RequestHandler {
 
     private final static String missingAction = "{\"status\":\"Failure\",\"message\":\"The 'action' attribute was not found\"}";
     protected final DatabaseClient databaseClient;
-    private final DateTimeFormatter formatter;
     protected final String collection;
     protected final ActionHandler defaultHandler;
     protected final HashMap<String, ActionHandler> handlers;
+    private final DateTimeFormatter formatter;
 
     public AuthHandlerManager(DatabaseClient databaseClient) {
         this.databaseClient = databaseClient;
@@ -75,7 +75,7 @@ public class AuthHandlerManager implements RequestHandler {
                 if (hashpass.equals(password)) {
                     // TODO: criar um token decente
                     String now = LocalDateTime.now().format(formatter);
-                    response.addProperty("token", username+"$"+password+"$"+now);
+                    response.addProperty("token", username + "$" + password + "$" + now);
                     response.addProperty("status", "Success");
                 } else {
                     response.addProperty("status", "Failure");
@@ -97,11 +97,10 @@ public class AuthHandlerManager implements RequestHandler {
     }
 
 
-
     public String authorizeHandler(JsonObject json) {
         JsonElement tokenElem = json.get("token");
         JsonObject response = new JsonObject();
-        if (tokenElem != null){
+        if (tokenElem != null) {
             String token = tokenElem.getAsString();
             // TODO: validar um token
             response.addProperty("status", "Success");
