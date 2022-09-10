@@ -28,6 +28,11 @@ public class LoadBalancerHandlerManager implements RequestHandler {
         heartBeatExecutor.scheduleWithFixedDelay(this::heartbeat, 2, 2, TimeUnit.SECONDS);
     }
 
+    public void disableHeartbeat() {
+        heartBeatExecutor.shutdown();
+        heartBeatExecutor.close();
+    }
+
     @Override
     public Message handle(Message message) {
         try {

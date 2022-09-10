@@ -64,6 +64,15 @@ public class CommentHandlerManager extends BasicDBHandlerManager {
         JsonElement limitElem = json.get("limit");
         JsonObject response = new JsonObject();
         if (idIssueElem != null && pageElem != null && limitElem != null) {
+
+            JsonObject issue = client.get("Issue", idIssueElem.getAsInt(), token);
+            if (issue.get("status").getAsString().equals("Failure")) {
+                response = new JsonObject();
+                response.addProperty("status", "Failure");
+                response.addProperty("message", "Issue not found");
+                return response.toString();
+            }
+
             long page = pageElem.getAsLong();
             long limit = limitElem.getAsLong();
             try {

@@ -4,12 +4,16 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import jv.distribuida.client.DatabaseClient;
+import jv.distribuida.client.GetClient;
 
 import java.util.HashMap;
 
 public class IssueHandlerManager extends BasicDBHandlerManager {
-    public IssueHandlerManager(DatabaseClient databaseClient) {
+
+    private final GetClient client;
+    public IssueHandlerManager(DatabaseClient databaseClient, GetClient client) {
         super(new HashMap<>(), databaseClient, "Issue");
+        this.client = client;
         handlers.put("CREATE", this::createHandler);
         handlers.put("UPDATE", this::updateHandler);
         handlers.put("MOVE", this::moveHandler);
@@ -24,6 +28,15 @@ public class IssueHandlerManager extends BasicDBHandlerManager {
         if (idBoardElem != null && nameElem != null && descElem != null) {
             JsonObject request = new JsonObject();
             int idBoard = idBoardElem.getAsInt();
+
+            JsonObject issue = client.get("Board", idBoard, token);
+            if (issue.get("status").getAsString().equals("Failure")) {
+                response = new JsonObject();
+                response.addProperty("status", "Failure");
+                response.addProperty("message", "Board not found");
+                return response.toString();
+            }
+
             String name = nameElem.getAsString();
             String description = descElem.getAsString();
             request.addProperty("idBoard", idBoard);
@@ -107,8 +120,15 @@ public class IssueHandlerManager extends BasicDBHandlerManager {
             JsonObject request = new JsonObject();
             int id = idElem.getAsInt();
             int idBoard = idBoardElem.getAsInt();
-            JsonObject board = new JsonObject();
-            board.addProperty("status", "oko");
+
+            JsonObject issue = client.get("Board", idBoard, token);
+            if (issue.get("status").getAsString().equals("Failure")) {
+                response = new JsonObject();
+                response.addProperty("status", "Failure");
+                response.addProperty("message", "Board not found");
+                return response.toString();
+            }
+
             request.addProperty("id", id);
             request.addProperty("idBoard", idBoard);
             try {
