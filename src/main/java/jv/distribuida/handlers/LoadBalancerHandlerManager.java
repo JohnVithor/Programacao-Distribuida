@@ -58,10 +58,10 @@ public class LoadBalancerHandlerManager implements RequestHandler {
     void heartbeat() {
         for (String key : services.keySet().stream().toList()) {
             if (!services.get(key).heartbeat()) {
-                System.out.println(key + " removed because none service is alive");
+                System.out.println(key + " removed because none of its services is alive");
                 services.remove(key);
             } else {
-                System.out.println(key + " alive with " + services.get(key).size() + " services");
+                System.out.println(key + " alive with " + services.get(key).size() + " running services");
             }
         }
     }

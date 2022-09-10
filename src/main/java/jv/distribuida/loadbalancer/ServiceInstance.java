@@ -73,7 +73,6 @@ public class ServiceInstance implements Serializable {
                 return false;
             }
         } catch (JsonSyntaxException | IllegalStateException | IOException e) {
-            e.printStackTrace();
             return false;
         }finally {
             try {
