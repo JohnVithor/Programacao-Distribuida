@@ -4,12 +4,15 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import jv.distribuida.client.DatabaseClient;
+import jv.distribuida.client.GetClient;
 
 import java.util.HashMap;
 
 public class CommentHandlerManager extends BasicDBHandlerManager {
-    public CommentHandlerManager(DatabaseClient databaseClient) {
+    private final GetClient client;
+    public CommentHandlerManager(DatabaseClient databaseClient, GetClient client) {
         super(new HashMap<>(), databaseClient, "Comment");
+        this.client = client;
         handlers.put("CREATE", this::createHandler);
         handlers.put("BYISSUE", this::findByIssueHandler);
     }
@@ -20,6 +23,15 @@ public class CommentHandlerManager extends BasicDBHandlerManager {
         JsonObject response;
         if (idIssueElem != null && contentElem != null) {
             int idIssue = idIssueElem.getAsInt();
+
+            JsonObject issue = client.get("Issue", idIssue, token);
+            if (issue.get("status").getAsString().equals("Failure")) {
+                response = new JsonObject();
+                response.addProperty("status", "Failure");
+                response.addProperty("message", "Issue not found");
+                return response.toString();
+            }
+
             JsonObject request = new JsonObject();
             String content = contentElem.getAsString();
             request.addProperty("idIssue", idIssue);

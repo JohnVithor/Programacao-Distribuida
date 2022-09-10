@@ -3,10 +3,7 @@ package jv.distribuida.UDPServers;
 import com.google.gson.JsonObject;
 import jv.distribuida.client.DatabaseClient;
 import jv.distribuida.handlers.IssueHandlerManager;
-import jv.distribuida.network.Message;
-import jv.distribuida.network.RequestHandler;
-import jv.distribuida.network.UDPConnection;
-import jv.distribuida.network.UDPRequestHandler;
+import jv.distribuida.network.*;
 
 import java.io.IOException;
 import java.net.InetAddress;
@@ -20,9 +17,7 @@ public class UDPIssueServer {
         int dbport = Integer.parseInt(args[2]);
         int lbport = Integer.parseInt(args[3]);
 
-        UDPConnection dbConnection = new UDPConnection();
-        dbConnection.setTimeout(1000);
-        DatabaseClient databaseClient = new DatabaseClient(InetAddress.getLocalHost(), dbport, dbConnection);
+        DatabaseClient databaseClient = new DatabaseClient(InetAddress.getLocalHost(), dbport, ConnectionType.UDP);
 
         RequestHandler handler = new IssueHandlerManager(databaseClient);
         UDPConnection connection = new UDPConnection(port);

@@ -5,24 +5,29 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonSyntaxException;
 import jv.distribuida.network.Connection;
+import jv.distribuida.network.ConnectionCreator;
+import jv.distribuida.network.ConnectionType;
 import jv.distribuida.network.Message;
 
 import java.io.IOException;
 import java.net.InetAddress;
 
 public class DatabaseClient {
-    private final Connection connection;
+    private final ConnectionType type;
     private final InetAddress address;
     private final int port;
 
-    public DatabaseClient(InetAddress address, int port, Connection connection) {
-        this.connection = connection;
+    public DatabaseClient(InetAddress address, int port, ConnectionType type) {
+        this.type = type;
         this.address = address;
         this.port = port;
     }
 
     JsonElement handleResponse(JsonObject request) {
+        Connection connection = null;
         try {
+            connection = ConnectionCreator.createConnection(type, address, port);
+            connection.setTimeout(1000);
             connection.send(new Message(address, port, request.toString()));
             connection.setTimeout(100);
             Message message = connection.receive();
@@ -34,6 +39,14 @@ public class DatabaseClient {
             }
         } catch (JsonSyntaxException | IllegalStateException | IOException e) {
             throw new RuntimeException(e);
+        } finally {
+            try {
+                if (connection != null) {
+                    connection.close();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 
