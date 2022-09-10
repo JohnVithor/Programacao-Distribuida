@@ -25,7 +25,7 @@ public class LoadBalancerHandlerManager implements RequestHandler {
     public LoadBalancerHandlerManager(ConnectionType type) {
         this.services = new HashMap<>();
         this.type = type;
-        heartBeatExecutor.scheduleWithFixedDelay(this::heartbeat, 5, 5, TimeUnit.SECONDS);
+        heartBeatExecutor.scheduleWithFixedDelay(this::heartbeat, 2, 2, TimeUnit.SECONDS);
     }
 
     @Override
@@ -53,10 +53,10 @@ public class LoadBalancerHandlerManager implements RequestHandler {
     void heartbeat() {
         for (String key : services.keySet().stream().toList()) {
             if (!services.get(key).heartbeat()) {
-                System.out.println(key + " removed!");
+                System.out.println(key + " removed because none service is alive");
                 services.remove(key);
             } else {
-                System.out.println(key + " alive!");
+                System.out.println(key + " alive with " + services.get(key).size() + " services");
             }
         }
     }

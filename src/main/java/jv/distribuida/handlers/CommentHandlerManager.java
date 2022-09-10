@@ -32,7 +32,7 @@ public class CommentHandlerManager extends BasicDBHandlerManager {
                 response = new JsonObject();
                 response.addProperty("status", "Failure");
                 response.addProperty("message", e.getMessage());
-                return response.getAsString();
+                return response.toString();
             }
         } else {
             response = new JsonObject();
@@ -62,7 +62,7 @@ public class CommentHandlerManager extends BasicDBHandlerManager {
                 response = new JsonObject();
                 response.addProperty("status", "Failure");
                 response.addProperty("message", e.getMessage());
-                return response.getAsString();
+                return response.toString();
             }
         } else {
             response.addProperty("status", "Failure");

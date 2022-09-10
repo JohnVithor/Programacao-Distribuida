@@ -26,8 +26,12 @@ public class ServiceInfo implements Serializable {
     public JsonObject redirect(JsonObject json) throws IOException {
         ServiceInstance instance;
 //        synchronized (instances) {
+        if (instances.size() == 1) {
+            instance = instances.get(0);
+        } else {
             next.set(next.get() % instances.size());
             instance = instances.get(next.getAndIncrement());
+        }
 //        }
         return instance.redirect(json);
     }
@@ -49,5 +53,9 @@ public class ServiceInfo implements Serializable {
             instances.removeIf(instance -> !instance.heartbeat());
             return !instances.isEmpty();
 //        }
+    }
+
+    public int size(){
+        return instances.size();
     }
 }
