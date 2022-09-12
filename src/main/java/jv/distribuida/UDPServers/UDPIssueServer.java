@@ -31,7 +31,6 @@ public class UDPIssueServer {
             JsonObject json = new JsonObject();
             json.addProperty("target", "LoadBalancer");
             json.addProperty("service", "Issue");
-            json.addProperty("address", "localhost");
             json.addProperty("port", port);
             json.addProperty("heartbeat", hbport);
             json.addProperty("auth", true);

@@ -7,6 +7,9 @@ import jv.distribuida.network.RequestHandler;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
+import java.time.temporal.TemporalAccessor;
+import java.time.temporal.TemporalUnit;
 import java.util.HashMap;
 
 public class AuthHandlerManager implements RequestHandler {
@@ -96,8 +99,15 @@ public class AuthHandlerManager implements RequestHandler {
         JsonObject response = new JsonObject();
         if (tokenElem != null) {
             String token = tokenElem.getAsString();
-            // TODO: validar um token
-            response.addProperty("status", "Success");
+            String[] parts = token.split("\\$");
+            System.out.println(token);
+            LocalDateTime loginTime = LocalDateTime.parse(parts[2], formatter);
+            if(loginTime.until(LocalDateTime.now(), ChronoUnit.HOURS) < 24) {
+                response.addProperty("status", "Success");
+            } else {
+                response.addProperty("status", "Failure");
+                response.addProperty("message", "The token is expired");
+            }
         } else {
             response.addProperty("status", "Failure");
             response.addProperty("message", "A token must be given");

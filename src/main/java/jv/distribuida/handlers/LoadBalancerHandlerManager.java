@@ -44,6 +44,7 @@ public class LoadBalancerHandlerManager implements RequestHandler {
             }
             String target = targetElem.getAsString();
             if (target.equals("LoadBalancer")) { // load balancer service
+                json.addProperty("address", message.getAddress().getHostAddress());
                 message.setText(handleLoadBalancer(json));
             } else { // Other service
                 message.setText(handleService(target, json));
@@ -124,8 +125,6 @@ public class LoadBalancerHandlerManager implements RequestHandler {
             response.addProperty("message", "All the listed fields are needed");
             JsonArray fields = new JsonArray();
             fields.add("service");
-            fields.add("address");
-            fields.add("port");
             fields.add("heartbeat");
             fields.add("auth");
             response.add("fields", fields);

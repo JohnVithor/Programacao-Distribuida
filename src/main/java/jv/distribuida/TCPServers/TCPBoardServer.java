@@ -29,7 +29,6 @@ public class TCPBoardServer {
             JsonObject json = new JsonObject();
             json.addProperty("target", "LoadBalancer");
             json.addProperty("service", "Board");
-            json.addProperty("address", "localhost");
             json.addProperty("port", port);
             json.addProperty("heartbeat", hbport);
             json.addProperty("auth", true);

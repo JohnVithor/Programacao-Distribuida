@@ -33,7 +33,6 @@ public class TCPCommentServer {
             JsonObject json = new JsonObject();
             json.addProperty("target", "LoadBalancer");
             json.addProperty("service", "Comment");
-            json.addProperty("address", "localhost");
             json.addProperty("port", port);
             json.addProperty("heartbeat", hbport);
             json.addProperty("auth", true);
