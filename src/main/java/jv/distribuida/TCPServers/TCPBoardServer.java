@@ -10,7 +10,8 @@ import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-import static jv.distribuida.loadbalancer.ServiceInstance.startHeartBeat;
+import static jv.distribuida.loadbalancer.ServiceInstance.TCPstartHeartBeat;
+import static jv.distribuida.loadbalancer.ServiceInstance.UDPstartHeartBeat;
 
 public class TCPBoardServer {
     public static void main(String[] args) throws IOException {
@@ -23,8 +24,7 @@ public class TCPBoardServer {
             DatabaseClient databaseClient = new DatabaseClient(InetAddress.getLocalHost(), dbport, ConnectionType.TCP);
             RequestHandler handler = new BoardHandlerManager(databaseClient);
 
-            TCPConnection hbconnection = new TCPConnection(new Socket(InetAddress.getLocalHost(), hbport));
-            startHeartBeat(hbconnection);
+            TCPstartHeartBeat(hbport);
 
             JsonObject json = new JsonObject();
             json.addProperty("target", "LoadBalancer");

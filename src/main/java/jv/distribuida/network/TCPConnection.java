@@ -19,7 +19,7 @@ public class TCPConnection implements Connection {
     }
 
     public void send(Message message) throws IOException {
-        output.write(message.getText() + "\r\n");
+        output.write(message.getText() + "\r\n\r\n");
         output.flush();
     }
 

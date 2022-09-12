@@ -3,7 +3,6 @@ package jv.distribuida.TCPServers;
 import com.google.gson.JsonObject;
 import jv.distribuida.client.DatabaseClient;
 import jv.distribuida.handlers.AuthHandlerManager;
-import jv.distribuida.handlers.BoardHandlerManager;
 import jv.distribuida.network.*;
 
 import java.io.IOException;
@@ -11,7 +10,8 @@ import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-import static jv.distribuida.loadbalancer.ServiceInstance.startHeartBeat;
+import static jv.distribuida.loadbalancer.ServiceInstance.TCPstartHeartBeat;
+import static jv.distribuida.loadbalancer.ServiceInstance.UDPstartHeartBeat;
 
 public class TCPAuthServer {
     public static void main(String[] args) {
@@ -24,8 +24,7 @@ public class TCPAuthServer {
             DatabaseClient databaseClient = new DatabaseClient(InetAddress.getLocalHost(), dbport, ConnectionType.TCP);
             RequestHandler handler = new AuthHandlerManager(databaseClient);
 
-            TCPConnection hbconnection = new TCPConnection(new Socket(InetAddress.getLocalHost(), hbport));
-            startHeartBeat(hbconnection);
+            TCPstartHeartBeat(hbport);
 
             JsonObject json = new JsonObject();
             json.addProperty("target", "LoadBalancer");

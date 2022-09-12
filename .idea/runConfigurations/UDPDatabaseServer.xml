@@ -5,7 +5,7 @@
     <option name="MAIN_CLASS_NAME" value="jv.distribuida.UDPServers.UDPDatabaseServer" />
     <module name="BoardService" />
     <option name="PROGRAM_PARAMETERS" value="9001" />
-    <option name="VM_PARAMETERS" value="--enable-preview" />
+    <option name="VM_PARAMETERS" value="-server --enable-preview" />
     <method v="2">
       <option name="Make" enabled="true" />
     </method>

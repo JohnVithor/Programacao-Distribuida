@@ -3,7 +3,7 @@
     <option name="MAIN_CLASS_NAME" value="jv.distribuida.UDPServers.UDPCommentServer" />
     <module name="BoardService" />
     <option name="PROGRAM_PARAMETERS" value="9006 9106 9001 9000" />
-    <option name="VM_PARAMETERS" value="--enable-preview" />
+    <option name="VM_PARAMETERS" value="-server --enable-preview" />
     <method v="2">
       <option name="Make" enabled="true" />
     </method>

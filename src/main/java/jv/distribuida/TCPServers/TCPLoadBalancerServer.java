@@ -1,17 +1,10 @@
 package jv.distribuida.TCPServers;
 
-import com.google.gson.JsonObject;
-import jv.distribuida.client.DatabaseClient;
-import jv.distribuida.handlers.BoardHandlerManager;
 import jv.distribuida.handlers.LoadBalancerHandlerManager;
 import jv.distribuida.network.*;
 
 import java.io.IOException;
-import java.net.InetAddress;
 import java.net.ServerSocket;
-import java.net.Socket;
-
-import static jv.distribuida.loadbalancer.ServiceInstance.startHeartBeat;
 
 public class TCPLoadBalancerServer {
     public static void main(String[] args) {

@@ -6,10 +6,9 @@ import jv.distribuida.client.GetClient;
 import jv.distribuida.handlers.CommentHandlerManager;
 import jv.distribuida.network.*;
 
-import java.io.IOException;
 import java.net.InetAddress;
 
-import static jv.distribuida.loadbalancer.ServiceInstance.startHeartBeat;
+import static jv.distribuida.loadbalancer.ServiceInstance.UDPstartHeartBeat;
 
 public class UDPCommentServer {
     public static void main(String[] args) {
@@ -25,7 +24,7 @@ public class UDPCommentServer {
             RequestHandler handler = new CommentHandlerManager(databaseClient, lbQuery);
 
             UDPConnection hbconnection = new UDPConnection(hbport);
-            startHeartBeat(hbconnection);
+            UDPstartHeartBeat(hbconnection);
 
             JsonObject json = new JsonObject();
             json.addProperty("target", "LoadBalancer");

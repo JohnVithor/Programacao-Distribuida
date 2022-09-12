@@ -5,10 +5,9 @@ import jv.distribuida.client.DatabaseClient;
 import jv.distribuida.handlers.BoardHandlerManager;
 import jv.distribuida.network.*;
 
-import java.io.IOException;
 import java.net.InetAddress;
 
-import static jv.distribuida.loadbalancer.ServiceInstance.startHeartBeat;
+import static jv.distribuida.loadbalancer.ServiceInstance.UDPstartHeartBeat;
 
 public class UDPBoardServer {
     public static void main(String[] args) {
@@ -23,7 +22,7 @@ public class UDPBoardServer {
             UDPConnection connection = new UDPConnection(port);
 
             UDPConnection hbconnection = new UDPConnection(hbport);
-            startHeartBeat(hbconnection);
+            UDPstartHeartBeat(hbconnection);
 
             JsonObject json = new JsonObject();
             json.addProperty("target", "LoadBalancer");

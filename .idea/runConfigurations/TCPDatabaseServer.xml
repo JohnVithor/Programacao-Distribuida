@@ -1,0 +1,11 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="TCPDatabaseServer" type="Application" factoryName="Application" singleton="false" nameIsGenerated="true">
+    <option name="MAIN_CLASS_NAME" value="jv.distribuida.TCPServers.TCPDatabaseServer" />
+    <module name="BoardService" />
+    <option name="PROGRAM_PARAMETERS" value="9001" />
+    <option name="VM_PARAMETERS" value="-server --enable-preview" />
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>

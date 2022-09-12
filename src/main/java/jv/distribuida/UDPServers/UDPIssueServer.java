@@ -9,7 +9,7 @@ import jv.distribuida.network.*;
 import java.io.IOException;
 import java.net.InetAddress;
 
-import static jv.distribuida.loadbalancer.ServiceInstance.startHeartBeat;
+import static jv.distribuida.loadbalancer.ServiceInstance.UDPstartHeartBeat;
 
 public class UDPIssueServer {
     public static void main(String[] args) throws IOException {
@@ -26,7 +26,7 @@ public class UDPIssueServer {
             UDPConnection connection = new UDPConnection(port);
 
             UDPConnection hbconnection = new UDPConnection(hbport);
-            startHeartBeat(hbconnection);
+            UDPstartHeartBeat(hbconnection);
 
             JsonObject json = new JsonObject();
             json.addProperty("target", "LoadBalancer");

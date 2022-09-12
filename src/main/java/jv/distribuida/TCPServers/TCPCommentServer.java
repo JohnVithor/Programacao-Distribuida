@@ -3,7 +3,6 @@ package jv.distribuida.TCPServers;
 import com.google.gson.JsonObject;
 import jv.distribuida.client.DatabaseClient;
 import jv.distribuida.client.GetClient;
-import jv.distribuida.handlers.AuthHandlerManager;
 import jv.distribuida.handlers.CommentHandlerManager;
 import jv.distribuida.network.*;
 
@@ -12,7 +11,8 @@ import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-import static jv.distribuida.loadbalancer.ServiceInstance.startHeartBeat;
+import static jv.distribuida.loadbalancer.ServiceInstance.TCPstartHeartBeat;
+import static jv.distribuida.loadbalancer.ServiceInstance.UDPstartHeartBeat;
 
 public class TCPCommentServer {
     public static void main(String[] args) {
@@ -27,8 +27,8 @@ public class TCPCommentServer {
             GetClient lbQuery = new GetClient(InetAddress.getLocalHost(), lbport, ConnectionType.TCP);
             RequestHandler handler = new CommentHandlerManager(databaseClient, lbQuery);
 
-            TCPConnection hbconnection = new TCPConnection(new Socket(InetAddress.getLocalHost(), hbport));
-            startHeartBeat(hbconnection);
+            TCPstartHeartBeat(hbport);
+
 
             JsonObject json = new JsonObject();
             json.addProperty("target", "LoadBalancer");

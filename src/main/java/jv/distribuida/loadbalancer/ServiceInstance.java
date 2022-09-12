@@ -9,6 +9,7 @@ import jv.distribuida.network.*;
 import java.io.IOException;
 import java.io.Serializable;
 import java.net.InetAddress;
+import java.net.ServerSocket;
 
 public class ServiceInstance implements Serializable {
     private final static String heartbeat = "{\"heartbeat\":\"Ok?\"}";
@@ -31,7 +32,7 @@ public class ServiceInstance implements Serializable {
 //        this.hbconnection.setTimeout(1000);
     }
 
-    public static void startHeartBeat(final Connection hbconnection) {
+    public static void UDPstartHeartBeat(final Connection hbconnection) {
         Thread.ofVirtual().start(() -> {
             while (true) {
                 Message message = null;
@@ -42,6 +43,22 @@ public class ServiceInstance implements Serializable {
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
+            }
+        });
+    }
+
+    public static void TCPstartHeartBeat(int hbport) {
+        Thread.ofVirtual().start(() -> {
+            try(ServerSocket serverSocket = new ServerSocket(hbport)) {
+                while (true) {
+                    TCPConnection hbconnection = new TCPConnection(serverSocket.accept());
+                    Message message = hbconnection.receive();
+                    message.setText(heartbeatR);
+                    hbconnection.send(message);
+                    hbconnection.close();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         });
     }

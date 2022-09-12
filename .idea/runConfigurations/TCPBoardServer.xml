@@ -1,6 +1,6 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="UDPBoardServer" type="Application" factoryName="Application" singleton="false">
-    <option name="MAIN_CLASS_NAME" value="jv.distribuida.UDPServers.UDPBoardServer" />
+  <configuration default="false" name="TCPBoardServer" type="Application" factoryName="Application" singleton="false" nameIsGenerated="true">
+    <option name="MAIN_CLASS_NAME" value="jv.distribuida.TCPServers.TCPBoardServer" />
     <module name="BoardService" />
     <option name="PROGRAM_PARAMETERS" value="9003 9103 9001 9000" />
     <option name="VM_PARAMETERS" value="-server --enable-preview" />
