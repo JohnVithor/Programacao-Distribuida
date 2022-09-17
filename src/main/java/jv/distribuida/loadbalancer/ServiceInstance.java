@@ -18,18 +18,12 @@ public class ServiceInstance implements Serializable {
     private final int port;
     private final int heartbeatPort;
     private final ConnectionType type;
-//    private final Connection connection;
-//    private final Connection hbconnection;
 
     public ServiceInstance(InetAddress address, int port, int heartbeatPort, ConnectionType type) throws IOException {
         this.address = address;
         this.port = port;
         this.heartbeatPort = heartbeatPort;
         this.type = type;
-//        this.connection = ConnectionCreator.createConnection(type, address, port);
-//        this.connection.setTimeout(1000);
-//        this.hbconnection = ConnectionCreator.createConnection(type, address, port);
-//        this.hbconnection.setTimeout(1000);
     }
 
     public static void UDPstartHeartBeat(final Connection hbconnection) {
@@ -63,14 +57,30 @@ public class ServiceInstance implements Serializable {
         });
     }
 
-    public JsonObject redirect(JsonObject json) throws IOException {
+    public static void HTTPstartHeartBeat(int hbport) {
+        Thread.ofVirtual().start(() -> {
+            try(ServerSocket serverSocket = new ServerSocket(hbport)) {
+                while (true) {
+                    HTTPConnection hbconnection = new HTTPConnection(serverSocket.accept());
+                    Message message = hbconnection.receive();
+                    Message response = new Message(message.getAddress(), message.getPort(), heartbeatR);
+                    hbconnection.send(response);
+                    hbconnection.close();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+    }
+
+    public Message redirect(String content) throws IOException {
         Connection connection = ConnectionCreator.createConnection(type, address, port);
         connection.setTimeout(1000);
-        connection.send(new Message(address, port, json.toString()));
+        connection.send(new Message(address, port, content));
         try {
-            return JsonParser.parseString(connection.receive().getText()).getAsJsonObject();
+            return connection.receive();
         } catch (JsonSyntaxException | IllegalStateException | IOException e) {
-            return exceptionHandler(e.getMessage());
+            return new Message(address, port, exceptionHandler(e.getMessage()).toString());
         } finally {
             connection.close();
         }
@@ -87,9 +97,15 @@ public class ServiceInstance implements Serializable {
             if (heartElem != null) {
                 return heartElem.getAsBoolean();
             } else {
+                System.out.println("A conexão com " + address.getHostAddress() +
+                        " pela porta " + port +
+                        " foi perdida!");
                 return false;
             }
         } catch (JsonSyntaxException | IllegalStateException | IOException e) {
+            System.out.println("A conexão com " + address.getHostAddress() +
+                    " pela porta " + port +
+                    " foi perdida!");
             return false;
         }finally {
             try {

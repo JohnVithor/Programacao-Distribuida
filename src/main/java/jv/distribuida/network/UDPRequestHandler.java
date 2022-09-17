@@ -17,7 +17,7 @@ public class UDPRequestHandler implements Runnable {
     public void run() {
         try {
             Message response = this.handler.handle(message);
-            connection.send(message);
+            connection.send(response);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

@@ -100,13 +100,22 @@ public class AuthHandlerManager implements RequestHandler {
         if (tokenElem != null) {
             String token = tokenElem.getAsString();
             String[] parts = token.split("\\$");
-            System.out.println(token);
-            LocalDateTime loginTime = LocalDateTime.parse(parts[2], formatter);
-            if(loginTime.until(LocalDateTime.now(), ChronoUnit.HOURS) < 24) {
-                response.addProperty("status", "Success");
-            } else {
+            if (parts.length != 3) {
                 response.addProperty("status", "Failure");
                 response.addProperty("message", "The token is expired");
+            } else {
+                try {
+                    LocalDateTime loginTime = LocalDateTime.parse(parts[2], formatter);
+                    if(loginTime.until(LocalDateTime.now(), ChronoUnit.HOURS) < 24) {
+                        response.addProperty("status", "Success");
+                    } else {
+                        response.addProperty("status", "Failure");
+                        response.addProperty("message", "The token is expired");
+                    }
+                } catch (Exception e) {
+                    response.addProperty("status", "Failure");
+                    response.addProperty("message", "The token is expired");
+                }
             }
         } else {
             response.addProperty("status", "Failure");

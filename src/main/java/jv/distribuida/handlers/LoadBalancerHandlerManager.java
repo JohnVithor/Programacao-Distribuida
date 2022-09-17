@@ -75,7 +75,8 @@ public class LoadBalancerHandlerManager implements RequestHandler {
         JsonObject request = new JsonObject();
         request.add("token", json.get("token"));
         request.addProperty("action", "AUTHORIZE");
-        JsonObject response = info.redirect(request);
+
+        JsonObject response = JsonParser.parseString(info.redirect(request.toString()).getText()).getAsJsonObject();
         if (response.get("status").getAsString().equals("Failure")) {
             throw new IOException(response.get("message").getAsString());
         }
@@ -98,7 +99,6 @@ public class LoadBalancerHandlerManager implements RequestHandler {
         if (serviceElem != null && addressElem != null &&
                 portElem != null && authElem != null && hbElem != null) {
             String service = serviceElem.getAsString();
-            System.out.println("Olá " + service);
             String address = addressElem.getAsString();
             int port = portElem.getAsInt();
             int heartbeat = hbElem.getAsInt();
@@ -114,6 +114,8 @@ public class LoadBalancerHandlerManager implements RequestHandler {
                     port, heartbeat, type);
             if (!serviceInfo.contains(instance)) {
                 serviceInfo.add(instance);
+                System.out.println("Nova instância se registrou no service " + service +
+                        " com endereço " + address + " e porta " + port);
                 response.addProperty("status", "Success");
                 response.addProperty("message", "Service added to known services");
             } else {
@@ -138,7 +140,7 @@ public class LoadBalancerHandlerManager implements RequestHandler {
             if (info.isRequiresAuth()) {
                 authorize(json);
             }
-            return info.redirect(json).toString();
+            return info.redirect(json.toString()).getText();
         } else {
             return targetNotFound.replace("$$$", target);
         }

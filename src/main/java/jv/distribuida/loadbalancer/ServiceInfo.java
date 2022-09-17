@@ -1,6 +1,6 @@
 package jv.distribuida.loadbalancer;
 
-import com.google.gson.JsonObject;
+import jv.distribuida.network.Message;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -23,7 +23,7 @@ public class ServiceInfo implements Serializable {
         return requiresAuth;
     }
 
-    public JsonObject redirect(JsonObject json) throws IOException {
+    public Message redirect(String content) throws IOException {
         ServiceInstance instance;
 //        synchronized (instances) {
         if (instances.size() == 1) {
@@ -33,7 +33,7 @@ public class ServiceInfo implements Serializable {
             instance = instances.get(next.getAndIncrement());
         }
 //        }
-        return instance.redirect(json);
+        return instance.redirect(content);
     }
 
     public void add(ServiceInstance instance) {

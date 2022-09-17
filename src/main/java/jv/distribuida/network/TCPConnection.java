@@ -8,9 +8,9 @@ import java.net.Socket;
 import java.net.SocketException;
 
 public class TCPConnection implements Connection {
-    private final Socket socket;
-    private final BufferedReader input;
-    private final PrintWriter output;
+    protected final Socket socket;
+    protected final BufferedReader input;
+    protected final PrintWriter output;
 
     public TCPConnection(Socket socket) throws IOException {
         this.socket = socket;

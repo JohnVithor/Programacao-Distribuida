@@ -1,0 +1,17 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="HTTPIssueServer" type="Application" factoryName="Application" nameIsGenerated="true">
+    <option name="MAIN_CLASS_NAME" value="jv.distribuida.HTTPServers.HTTPIssueServer" />
+    <module name="BoardService" />
+    <option name="PROGRAM_PARAMETERS" value="9004 9104 9001 9000" />
+    <option name="VM_PARAMETERS" value="-server --enable-preview" />
+    <extension name="coverage">
+      <pattern>
+        <option name="PATTERN" value="jv.distribuida.HTTPServers.*" />
+        <option name="ENABLED" value="true" />
+      </pattern>
+    </extension>
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>

@@ -10,7 +10,7 @@ public class ConnectionCreator {
         return switch (type) {
             case UDP -> new UDPConnection();
             case TCP -> new TCPConnection(new Socket(address, port));
-            case HTTP -> throw new IOException("Not Implemented yet");
+            case HTTP -> new HTTPConnection(new Socket(address, port));
         };
     }
 }
