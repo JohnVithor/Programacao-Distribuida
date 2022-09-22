@@ -25,27 +25,27 @@ public class ServiceInfo implements Serializable {
 
     public Message redirect(String content) throws IOException {
         ServiceInstance instance;
-//        synchronized (instances) {
-        if (instances.size() == 1) {
-            instance = instances.get(0);
-        } else {
-            next.set(next.get() % instances.size());
-            instance = instances.get(next.getAndIncrement());
+        synchronized (instances) {
+            if (instances.size() == 1) {
+                instance = instances.get(0);
+            } else {
+                next.set(next.get() % instances.size());
+                instance = instances.get(next.getAndIncrement());
+            }
         }
-//        }
         return instance.redirect(content);
     }
 
     public void add(ServiceInstance instance) {
-//        synchronized (instances) {
+        synchronized (instances) {
             this.instances.add(instance);
-//        }
+        }
     }
 
     public boolean contains(ServiceInstance instance) {
-//        synchronized (instances) {
+        synchronized (instances) {
             return this.instances.contains(instance);
-//        }
+        }
     }
 
     public boolean heartbeat() {
